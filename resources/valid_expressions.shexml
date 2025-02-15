@@ -1,0 +1,9 @@
+EXPRESSION exp <file.example>
+EXPRESSION exp <file.example.field1>
+EXPRESSION exp <file.it1 UNION file.it2>
+EXPRESSION exp <file.it1.field2 UNION file.it2.field3>
+EXPRESSION exp <file1.it1 JOIN file2.it2 ON file1.it1.field1 = file2.it2.field1>
+EXPRESSION exp <file.it1 UNION file.it2 SUBSTITUTING file.it3>
+EXPRESSION exp <file.it1.id UNION file.it2.name SUBSTITUTING file.it1.name>
+EXPRESSION exp <file.it1 + "-" + file.it2>
+EXPRESSION exp <file.it1.field2 + "-" + file.it2.field3>

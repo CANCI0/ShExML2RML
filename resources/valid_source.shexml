@@ -1,0 +1,3 @@
+SOURCE json_file <file:///example/path/to/file/file.json>
+SOURCE json_relative_path <file.json>
+SOURCE xml_file <https://example.com/file.xml>

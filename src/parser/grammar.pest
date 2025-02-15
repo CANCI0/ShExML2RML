@@ -1,0 +1,32 @@
+SHEXML = { DECLARATION* ~ SHAPE* }
+
+DECLARATION =  { PREFIX | SOURCE | ITERATOR | EXPRESSION }
+PREFIX      =  { "PREFIX" ~ PREFIX_IDENTIFIER ~ "<" ~ URI ~ ">" }
+SOURCE      =  { "SOURCE" ~ IDENTIFIER ~ "<" ~ (URI | RELATIVE_PATH) ~ ">" }
+EXPRESSION  =  { "EXPRESSION" ~ IDENTIFIER ~ "<" ~ UNION ~ ">" }
+ITERATOR    =  { "ITERATOR" ~ IDENTIFIER ~ "<" ~ (QUERY_CLAUSE | QUERY_PART) ~ ">" ~ "{" ~ FIELD+ ~ ITERATOR* ~ "}" }
+SHAPE       =  { TYPE ~ PREFIX_IDENTIFIER ~ "[" ~ ITERATOR_QUERY ~ "]" ~ "{" ~ (PREDICATE_OBJECT ~ ";")+ ~ "}" }
+
+URI                           =  { ("https" | "http" | "file") ~ "://" ~ (ASCII_ALPHANUMERIC | ALLOWED_CHARACTERS)* }
+RELATIVE_PATH                 =  { (ASCII_ALPHANUMERIC | ALLOWED_CHARACTERS)+ }
+PREFIX_IDENTIFIER             =  { (ASCII_ALPHANUMERIC | ALLOWED_IDENTIFIER_CHARACTERS)* ~ ":" }
+IDENTIFIER                    = @{ (ASCII_ALPHANUMERIC | ALLOWED_IDENTIFIER_CHARACTERS)+ }
+ALLOWED_IDENTIFIER_CHARACTERS = _{ ("-" | "_") }
+QUERY_CLAUSE                  =  { ("jsonpath:" | "xpath:") ~ QUERY_PART }
+FIELD                         =  { "FIELD" ~ IDENTIFIER ~ "<" ~ QUERY_PART ~ ">" }
+QUERY_PART                    =  { (ASCII_ALPHANUMERIC | ALLOWED_CHARACTERS)+ }
+ALLOWED_CHARACTERS            = _{ "[" | "]" | "*" | "_" | "/" | "\\" | "@" | "." | "," | "%" | "-" | "(" | ")" | "?" | "=" | "&" | "#" | "$" | ":" | "^" | "\"" | ";" | "\\<" | "\\>" | "á" | "é" | "í" | "ó" | "ú" | "Á" | "É" | "Í" | "Ó" | "Ú" | "ñ" | "ü" | "Ñ" | "Ü" }
+UNION                         =  { ITERATOR_QUERY ~ "UNION" ~ ITERATOR_QUERY ~ ("UNION" ~ ITERATOR_QUERY)* }
+ITERATOR_QUERY                = @{ IDENTIFIER ~ "." ~ COMPOSED_VARIBLE }
+PREDICATE_OBJECT              =  { PREDICATE_PREFIX ~ (PREDICATE | SHAPE_LINK) }
+PREDICATE_PREFIX              =  { PREFIX_IDENTIFIER ~ IDENTIFIER }
+PREDICATE                     =  { PREFIX_IDENTIFIER? ~ "[" ~ ITERATOR_QUERY ~ "]" }
+SHAPE_LINK                    =  { "@" ~ PREFIX_IDENTIFIER ~ IDENTIFIER }
+TYPE                          =  { PREFIX_IDENTIFIER ~ IDENTIFIER }
+
+COMPOSED_VARIBLE = { IDENTIFIER ~ "." ~ COMPOSED_VARIBLE | IDENTIFIER }
+
+STRING = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
+WHITESPACE = _{ " " | "\t" | "\n" }
+COMMENT    = _{ "#" ~ (!"\n" ~ ANY)* }
