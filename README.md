@@ -9,11 +9,6 @@ shexml-transpiler/
 │   │   ├── lexer.rs         # Analizador léxico (tokenización)
 │   │   ├── syntax.rs        # Analizador sintáctico
 │   │   ├── grammar.rs       # Gramática y validación
-│   ├── sources/             # Procesamiento de fuentes de datos (JSON, XML, etc.)
-│   │   ├── mod.rs           # Define el módulo `sources`
-│   │   ├── json.rs          # Procesamiento de JSON
-│   │   ├── xml.rs           # Procesamiento de XML
-│   │   ├── source_loader.rs # Descarga y manejo de datos desde fuentes remotas
 │   ├── transpilation/       # Módulo de conversión de SheXML a RML
 │   │   ├── mod.rs           # Define el módulo `transpilation`
 │   │   ├── shexml_to_rml.rs # Lógica de conversión de SheXML a RML
