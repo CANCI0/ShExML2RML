@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pest = "2.7.15"
-pest_derive = "2.7.15"
+rustemo = "0.7.0"
+
+[dev-dependencies]
+rustemo-compiler = "0.7.0"
+
+[build-dependencies]
+rustemo-compiler = "0.7.0"
 
