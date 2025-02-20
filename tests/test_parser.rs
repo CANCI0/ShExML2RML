@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use rust_shexml_interpreter::parser::syntax::parse_input;
+    use rust_shexml_interpreter::parser::shexml::ShexmlParser;
     use std::fs;
     use std::path::Path;
-    use rust_shexml_interpreter::parser::ast::*; 
+    use rustemo::Parser;
+    use rust_shexml_interpreter::parser::ast::*;
 
     fn read_test_file(file_name: &str) -> String {
         let path = Path::new("resources").join(file_name);
@@ -12,9 +13,10 @@ mod tests {
 
     #[test]
     fn test_valid_prefixes() {
+        let parser = ShexmlParser::new();
         let input = read_test_file("valid_prefix.shexml");
 
-        let result = parse_input(&input);
+        let result = parser.parse(&input);
 
         assert!(result.is_ok(), "The parser failed to parse valid input.");
 
@@ -52,27 +54,30 @@ mod tests {
 
     #[test]
     fn test_invalid_prefix() {
+        let parser = ShexmlParser::new();
         let input = read_test_file("invalid_prefix.shexml");
 
-        let result = parse_input(&input);
+        let result = parser.parse(&input);
 
         assert!(result.is_err(), "The parser should fail on invalid input.");
     }
 
     #[test]
     fn test_valid_source() {
+        let parser = ShexmlParser::new();
         let input = read_test_file("valid_source.shexml");
 
-        let result = parse_input(&input);
+        let result = parser.parse(&input);
 
         assert!(result.is_ok(), "The parser failed to parse valid input.");
     }
 
     #[test]
     fn test_invalid_source() {
+        let parser = ShexmlParser::new();
         let input = read_test_file("invalid_source.shexml");
 
-        let result = parse_input(&input);
+        let result = parser.parse(&input);
 
         assert!(result.is_err(), "The parser should fail on invalid input.");
     }

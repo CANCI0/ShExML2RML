@@ -1,0 +1,124 @@
+Shexml:
+    declarations=Declaration*
+    shapes=Shape*
+    ;
+
+Declaration:
+    Prefix
+    | Source
+    | Expression
+    | Iterator
+    ;
+
+Prefix:
+    "PREFIX" identifier=Namespace "<" uri=Uri ">"
+    ;
+
+Source:
+    "SOURCE" identifier=Identifier "<" path=Uri ">"
+    ;
+
+Expression:
+    "EXPRESSION" identifier=Identifier "<" paths=Path+[UnionLiteral] ">"
+    ;
+
+Iterator:
+    IteratorLiteral identifier=Identifier "<" path_type=PathLiteral path=Path ">"
+    "{"
+        fields=Attribute+
+        iterators=Nestedterator*
+    "}"
+    ;
+
+Nestedterator:
+    IteratorLiteral identifier=Identifier "<" path=Path ">"
+    "{"
+        fields=Attribute+
+        iterators=Iterator*
+    "}"
+    ;
+
+Attribute:
+    "FIELD" identifier=Identifier "<" path=Path ">"
+    ;
+
+Shape:
+    subject=Subject "{" predicate_objects=PredicateObject* "}"
+    ;
+
+Subject:
+    class=Class subject_identifier=SubjectIdentifier
+    ;
+
+Class:
+    Namespace Identifier
+    ;
+
+SubjectIdentifier:
+    prefix=Namespace? "[" subject_generator=ShapePath "]"
+    ;
+
+PredicateObject:
+    Predicate Object ";"
+    ;
+
+Predicate:
+    Namespace Identifier
+    ;
+
+Object:
+    DataValue
+    | Reference
+    ;
+
+DataValue:
+    namespace=Namespace? "[" ShapePath "]"
+    ;
+
+Reference:
+    "@" ":" identifier=Identifier
+    ;
+
+terminals
+
+PrefixLiteral: "PREFIX";
+
+SourceLiteral: "SOURCE";
+
+IteratorLiteral: "ITERATOR";
+
+FieldLiteral: "FIELD";
+
+ExpressionLiteral: "EXPRESSION";
+
+UnionLiteral: "UNION";
+
+OpenTag: "<";
+
+CloseTag: ">";
+
+OpenBrace: "{";
+
+CloseBrace: "}";
+
+OpenBracket: "[";
+
+CloseBracket: "]";
+
+AtSign: "@";
+
+Dots: ":";
+
+Semicolon: ";";
+
+Namespace: /[a-zA-Z0-9\-_]*:/;
+
+Identifier: /[a-zA-Z0-9\-_]*/;
+
+PathLiteral: /xpath:|jsonpath:/;
+
+Path: /[\/.@\$\[\]a-zA-Z0-9_\*\-'"]+/;
+
+ShapePath: /[\/.a-zA-Z0-9_\*\-]+/;
+
+Uri: /https?:\/\/[^\s<>"]+/;
