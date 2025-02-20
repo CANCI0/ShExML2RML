@@ -507,36 +507,36 @@ pub enum Terminal {
 }
 #[derive(Debug)]
 pub enum NonTerminal {
-    Shexml(shexml_actions::Shexml),
+    Shexml(crate::parser::ast::Shexml),
     Declaration1(shexml_actions::Declaration1),
     Declaration0(shexml_actions::Declaration0),
     Shape1(shexml_actions::Shape1),
     Shape0(shexml_actions::Shape0),
-    Declaration(shexml_actions::Declaration),
-    Prefix(shexml_actions::Prefix),
-    Source(shexml_actions::Source),
-    Expression(shexml_actions::Expression),
+    Declaration(crate::parser::ast::Declaration),
+    Prefix(crate::parser::ast::Prefix),
+    Source(crate::parser::ast::Source),
+    Expression(crate::parser::ast::Expression),
     Path1(shexml_actions::Path1),
-    Iterator(shexml_actions::Iterator),
+    Iterator(crate::parser::ast::Iterator),
     Attribute1(shexml_actions::Attribute1),
     Nestedterator1(shexml_actions::Nestedterator1),
     Nestedterator0(shexml_actions::Nestedterator0),
-    Nestedterator(shexml_actions::Nestedterator),
+    Nestedterator(crate::parser::ast::Nestedterator),
     Iterator1(shexml_actions::Iterator1),
     Iterator0(shexml_actions::Iterator0),
-    Attribute(shexml_actions::Attribute),
-    Shape(shexml_actions::Shape),
+    Attribute(crate::parser::ast::Attribute),
+    Shape(crate::parser::ast::Shape),
     PredicateObject1(shexml_actions::PredicateObject1),
     PredicateObject0(shexml_actions::PredicateObject0),
-    Subject(shexml_actions::Subject),
-    Class(shexml_actions::Class),
-    SubjectIdentifier(shexml_actions::SubjectIdentifier),
+    Subject(crate::parser::ast::Subject),
+    Class(crate::parser::ast::Class),
+    SubjectIdentifier(crate::parser::ast::SubjectIdentifier),
     NamespaceOpt(shexml_actions::NamespaceOpt),
-    PredicateObject(shexml_actions::PredicateObject),
-    Predicate(shexml_actions::Predicate),
-    Object(shexml_actions::Object),
-    DataValue(shexml_actions::DataValue),
-    Reference(shexml_actions::Reference),
+    PredicateObject(crate::parser::ast::PredicateObject),
+    Predicate(crate::parser::ast::Predicate),
+    Object(crate::parser::ast::Object),
+    DataValue(crate::parser::ast::DataValue),
+    Reference(crate::parser::ast::Reference),
 }
 type ActionFn = fn(token: TokenKind) -> Vec<Action<State, ProdKind>>;
 pub struct ShexmlParserDefinition {
@@ -2232,7 +2232,7 @@ impl DefaultBuilder {
     }
 }
 impl Builder for DefaultBuilder {
-    type Output = shexml_actions::Shexml;
+    type Output = crate::parser::ast::Shexml;
     fn get_result(&mut self) -> Self::Output {
         match self.res_stack.pop().unwrap() {
             Symbol::NonTerminal(NonTerminal::Shexml(r)) => r,

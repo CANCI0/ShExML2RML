@@ -1,6 +1,7 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
 use rustemo::Token as RustemoToken;
+use crate::parser::ast::*;
 use super::shexml::{TokenKind, Context};
 pub type Input = str;
 pub type Ctx<'i> = Context<'i, Input>;
@@ -30,11 +31,7 @@ pub type Uri = String;
 pub fn uri(_ctx: &Ctx, token: Token) -> Uri {
     token.value.into()
 }
-#[derive(Debug, Clone)]
-pub struct Shexml {
-    pub declarations: Declaration0,
-    pub shapes: Shape0,
-}
+
 pub fn shexml_c1(_ctx: &Ctx, declarations: Declaration0, shapes: Shape0) -> Shexml {
     Shexml { declarations, shapes }
 }
@@ -75,13 +72,7 @@ pub fn shape0_shape1(_ctx: &Ctx, shape1: Shape1) -> Shape0 {
 pub fn shape0_empty(_ctx: &Ctx) -> Shape0 {
     None
 }
-#[derive(Debug, Clone)]
-pub enum Declaration {
-    Prefix(Prefix),
-    Source(Source),
-    Expression(Expression),
-    Iterator(Iterator),
-}
+
 pub fn declaration_prefix(_ctx: &Ctx, prefix: Prefix) -> Declaration {
     Declaration::Prefix(prefix)
 }
@@ -94,27 +85,15 @@ pub fn declaration_expression(_ctx: &Ctx, expression: Expression) -> Declaration
 pub fn declaration_iterator(_ctx: &Ctx, iterator: Iterator) -> Declaration {
     Declaration::Iterator(iterator)
 }
-#[derive(Debug, Clone)]
-pub struct Prefix {
-    pub identifier: Namespace,
-    pub uri: Uri,
-}
+
 pub fn prefix_c1(_ctx: &Ctx, identifier: Namespace, uri: Uri) -> Prefix {
     Prefix { identifier, uri }
 }
-#[derive(Debug, Clone)]
-pub struct Source {
-    pub identifier: Identifier,
-    pub path: Uri,
-}
+
 pub fn source_c1(_ctx: &Ctx, identifier: Identifier, path: Uri) -> Source {
     Source { identifier, path }
 }
-#[derive(Debug, Clone)]
-pub struct Expression {
-    pub identifier: Identifier,
-    pub paths: Path1,
-}
+
 pub fn expression_c1(_ctx: &Ctx, identifier: Identifier, paths: Path1) -> Expression {
     Expression { identifier, paths }
 }
@@ -126,14 +105,7 @@ pub fn path1_c1(_ctx: &Ctx, mut path1: Path1, path: Path) -> Path1 {
 pub fn path1_path(_ctx: &Ctx, path: Path) -> Path1 {
     vec![path]
 }
-#[derive(Debug, Clone)]
-pub struct Iterator {
-    pub identifier: Identifier,
-    pub path_type: PathLiteral,
-    pub path: Path,
-    pub fields: Attribute1,
-    pub iterators: Nestedterator0,
-}
+
 pub fn iterator_c1(
     _ctx: &Ctx,
     identifier: Identifier,
@@ -187,13 +159,7 @@ pub fn nestedterator0_nestedterator1(
 pub fn nestedterator0_empty(_ctx: &Ctx) -> Nestedterator0 {
     None
 }
-#[derive(Debug, Clone)]
-pub struct Nestedterator {
-    pub identifier: Identifier,
-    pub path: Path,
-    pub fields: Attribute1,
-    pub iterators: Iterator0,
-}
+
 pub fn nestedterator_c1(
     _ctx: &Ctx,
     identifier: Identifier,
@@ -227,19 +193,11 @@ pub fn iterator0_iterator1(_ctx: &Ctx, iterator1: Iterator1) -> Iterator0 {
 pub fn iterator0_empty(_ctx: &Ctx) -> Iterator0 {
     None
 }
-#[derive(Debug, Clone)]
-pub struct Attribute {
-    pub identifier: Identifier,
-    pub path: Path,
-}
+
 pub fn attribute_c1(_ctx: &Ctx, identifier: Identifier, path: Path) -> Attribute {
     Attribute { identifier, path }
 }
-#[derive(Debug, Clone)]
-pub struct Shape {
-    pub subject: Subject,
-    pub predicate_objects: PredicateObject0,
-}
+
 pub fn shape_c1(
     _ctx: &Ctx,
     subject: Subject,
@@ -275,11 +233,7 @@ pub fn predicate_object0_predicate_object1(
 pub fn predicate_object0_empty(_ctx: &Ctx) -> PredicateObject0 {
     None
 }
-#[derive(Debug, Clone)]
-pub struct Subject {
-    pub class: Class,
-    pub subject_identifier: SubjectIdentifier,
-}
+
 pub fn subject_c1(
     _ctx: &Ctx,
     class: Class,
@@ -290,19 +244,11 @@ pub fn subject_c1(
         subject_identifier,
     }
 }
-#[derive(Debug, Clone)]
-pub struct Class {
-    pub namespace: Namespace,
-    pub identifier: Identifier,
-}
+
 pub fn class_c1(_ctx: &Ctx, namespace: Namespace, identifier: Identifier) -> Class {
     Class { namespace, identifier }
 }
-#[derive(Debug, Clone)]
-pub struct SubjectIdentifier {
-    pub prefix: NamespaceOpt,
-    pub subject_generator: ShapePath,
-}
+
 pub fn subject_identifier_c1(
     _ctx: &Ctx,
     prefix: NamespaceOpt,
@@ -320,11 +266,7 @@ pub fn namespace_opt_namespace(_ctx: &Ctx, namespace: Namespace) -> NamespaceOpt
 pub fn namespace_opt_empty(_ctx: &Ctx) -> NamespaceOpt {
     None
 }
-#[derive(Debug, Clone)]
-pub struct PredicateObject {
-    pub predicate: Predicate,
-    pub object: Object,
-}
+
 pub fn predicate_object_c1(
     _ctx: &Ctx,
     predicate: Predicate,
@@ -335,11 +277,7 @@ pub fn predicate_object_c1(
         object,
     }
 }
-#[derive(Debug, Clone)]
-pub struct Predicate {
-    pub namespace: Namespace,
-    pub identifier: Identifier,
-}
+
 pub fn predicate_c1(
     _ctx: &Ctx,
     namespace: Namespace,
@@ -347,22 +285,14 @@ pub fn predicate_c1(
 ) -> Predicate {
     Predicate { namespace, identifier }
 }
-#[derive(Debug, Clone)]
-pub enum Object {
-    DataValue(DataValue),
-    Reference(Reference),
-}
+
 pub fn object_data_value(_ctx: &Ctx, data_value: DataValue) -> Object {
     Object::DataValue(data_value)
 }
 pub fn object_reference(_ctx: &Ctx, reference: Reference) -> Object {
     Object::Reference(reference)
 }
-#[derive(Debug, Clone)]
-pub struct DataValue {
-    pub namespace: NamespaceOpt,
-    pub shape_path: ShapePath,
-}
+
 pub fn data_value_c1(
     _ctx: &Ctx,
     namespace: NamespaceOpt,
@@ -370,10 +300,7 @@ pub fn data_value_c1(
 ) -> DataValue {
     DataValue { namespace, shape_path }
 }
-#[derive(Debug, Clone)]
-pub struct Reference {
-    pub identifier: Identifier,
-}
+
 pub fn reference_c1(_ctx: &Ctx, identifier: Identifier) -> Reference {
     Reference { identifier }
 }
