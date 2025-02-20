@@ -9,7 +9,7 @@ pub enum Declaration {
     Prefix(Prefix),
     Source(Source),
     Expression(Expression),
-    Iterator(self::Iterator),
+    Iterator(Iterator),
 }
 
 #[derive(Debug, Clone)]
