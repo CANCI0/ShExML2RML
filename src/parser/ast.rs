@@ -36,11 +36,11 @@ pub struct Iterator {
     pub path_type: PathLiteral,
     pub path: Path,
     pub fields: Attribute1,
-    pub iterators: Nestedterator0,
+    pub iterators: NestedIterator0,
 }
 
 #[derive(Debug, Clone)]
-pub struct Nestedterator {
+pub struct NestedIterator {
     pub identifier: Identifier,
     pub path: Path,
     pub fields: Attribute1,
@@ -122,9 +122,9 @@ pub type Namespace = String;
 
 pub type NamespaceOpt = Option<Namespace>;
 
-pub type Nestedterator0 = Option<Nestedterator1>;
+pub type NestedIterator0 = Option<NestedIterator1>;
 
-pub type Nestedterator1 = Vec<Nestedterator>;
+pub type NestedIterator1 = Vec<NestedIterator>;
 
 pub type Path = String;
 

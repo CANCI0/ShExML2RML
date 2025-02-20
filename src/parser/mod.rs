@@ -1,3 +1,3 @@
 pub mod shexml;
 pub mod shexml_actions;
-mod ast;
+pub mod ast;

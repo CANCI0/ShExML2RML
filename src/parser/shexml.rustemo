@@ -26,11 +26,11 @@ Iterator:
     IteratorLiteral identifier=Identifier "<" path_type=PathLiteral path=Path ">"
     "{"
         fields=Attribute+
-        iterators=Nestedterator*
+        iterators=NestedIterator*
     "}"
     ;
 
-Nestedterator:
+NestedIterator:
     IteratorLiteral identifier=Identifier "<" path=Path ">"
     "{"
         fields=Attribute+
