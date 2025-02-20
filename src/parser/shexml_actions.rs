@@ -7,27 +7,27 @@ pub type Input = str;
 pub type Ctx<'i> = Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = RustemoToken<'i, Input, TokenKind>;
-pub type Namespace = String;
+
 pub fn namespace(_ctx: &Ctx, token: Token) -> Namespace {
     token.value.into()
 }
-pub type Identifier = String;
+
 pub fn identifier(_ctx: &Ctx, token: Token) -> Identifier {
     token.value.into()
 }
-pub type PathLiteral = String;
+
 pub fn path_literal(_ctx: &Ctx, token: Token) -> PathLiteral {
     token.value.into()
 }
-pub type Path = String;
+
 pub fn path(_ctx: &Ctx, token: Token) -> Path {
     token.value.into()
 }
-pub type ShapePath = String;
+
 pub fn shape_path(_ctx: &Ctx, token: Token) -> ShapePath {
     token.value.into()
 }
-pub type Uri = String;
+
 pub fn uri(_ctx: &Ctx, token: Token) -> Uri {
     token.value.into()
 }
@@ -35,7 +35,7 @@ pub fn uri(_ctx: &Ctx, token: Token) -> Uri {
 pub fn shexml_c1(_ctx: &Ctx, declarations: Declaration0, shapes: Shape0) -> Shexml {
     Shexml { declarations, shapes }
 }
-pub type Declaration1 = Vec<Declaration>;
+
 pub fn declaration1_c1(
     _ctx: &Ctx,
     mut declaration1: Declaration1,
@@ -47,7 +47,7 @@ pub fn declaration1_c1(
 pub fn declaration1_declaration(_ctx: &Ctx, declaration: Declaration) -> Declaration1 {
     vec![declaration]
 }
-pub type Declaration0 = Option<Declaration1>;
+
 pub fn declaration0_declaration1(
     _ctx: &Ctx,
     declaration1: Declaration1,
@@ -57,7 +57,7 @@ pub fn declaration0_declaration1(
 pub fn declaration0_empty(_ctx: &Ctx) -> Declaration0 {
     None
 }
-pub type Shape1 = Vec<Shape>;
+
 pub fn shape1_c1(_ctx: &Ctx, mut shape1: Shape1, shape: Shape) -> Shape1 {
     shape1.push(shape);
     shape1
@@ -65,7 +65,7 @@ pub fn shape1_c1(_ctx: &Ctx, mut shape1: Shape1, shape: Shape) -> Shape1 {
 pub fn shape1_shape(_ctx: &Ctx, shape: Shape) -> Shape1 {
     vec![shape]
 }
-pub type Shape0 = Option<Shape1>;
+
 pub fn shape0_shape1(_ctx: &Ctx, shape1: Shape1) -> Shape0 {
     Some(shape1)
 }
@@ -97,7 +97,7 @@ pub fn source_c1(_ctx: &Ctx, identifier: Identifier, path: Uri) -> Source {
 pub fn expression_c1(_ctx: &Ctx, identifier: Identifier, paths: Path1) -> Expression {
     Expression { identifier, paths }
 }
-pub type Path1 = Vec<Path>;
+
 pub fn path1_c1(_ctx: &Ctx, mut path1: Path1, path: Path) -> Path1 {
     path1.push(path);
     path1
@@ -122,7 +122,7 @@ pub fn iterator_c1(
         iterators,
     }
 }
-pub type Attribute1 = Vec<Attribute>;
+
 pub fn attribute1_c1(
     _ctx: &Ctx,
     mut attribute1: Attribute1,
@@ -134,7 +134,7 @@ pub fn attribute1_c1(
 pub fn attribute1_attribute(_ctx: &Ctx, attribute: Attribute) -> Attribute1 {
     vec![attribute]
 }
-pub type Nestedterator1 = Vec<Nestedterator>;
+
 pub fn nestedterator1_c1(
     _ctx: &Ctx,
     mut nestedterator1: Nestedterator1,
@@ -149,7 +149,7 @@ pub fn nestedterator1_nestedterator(
 ) -> Nestedterator1 {
     vec![nestedterator]
 }
-pub type Nestedterator0 = Option<Nestedterator1>;
+
 pub fn nestedterator0_nestedterator1(
     _ctx: &Ctx,
     nestedterator1: Nestedterator1,
@@ -174,7 +174,7 @@ pub fn nestedterator_c1(
         iterators,
     }
 }
-pub type Iterator1 = Vec<Box<Iterator>>;
+
 pub fn iterator1_c1(
     _ctx: &Ctx,
     mut iterator1: Iterator1,
@@ -186,7 +186,7 @@ pub fn iterator1_c1(
 pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator) -> Iterator1 {
     vec![Box::new(iterator)]
 }
-pub type Iterator0 = Option<Iterator1>;
+
 pub fn iterator0_iterator1(_ctx: &Ctx, iterator1: Iterator1) -> Iterator0 {
     Some(iterator1)
 }
@@ -208,7 +208,7 @@ pub fn shape_c1(
         predicate_objects,
     }
 }
-pub type PredicateObject1 = Vec<PredicateObject>;
+
 pub fn predicate_object1_c1(
     _ctx: &Ctx,
     mut predicate_object1: PredicateObject1,
@@ -223,7 +223,7 @@ pub fn predicate_object1_predicate_object(
 ) -> PredicateObject1 {
     vec![predicate_object]
 }
-pub type PredicateObject0 = Option<PredicateObject1>;
+
 pub fn predicate_object0_predicate_object1(
     _ctx: &Ctx,
     predicate_object1: PredicateObject1,
@@ -259,7 +259,7 @@ pub fn subject_identifier_c1(
         subject_generator,
     }
 }
-pub type NamespaceOpt = Option<Namespace>;
+
 pub fn namespace_opt_namespace(_ctx: &Ctx, namespace: Namespace) -> NamespaceOpt {
     Some(namespace)
 }

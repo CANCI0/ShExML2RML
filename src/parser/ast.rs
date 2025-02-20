@@ -1,5 +1,3 @@
-use crate::parser::shexml_actions::{Attribute1, Declaration0, Identifier, Iterator0, Namespace, NamespaceOpt, Nestedterator0, Path, Path1, PathLiteral, PredicateObject0, Shape0, ShapePath, Uri};
-
 #[derive(Debug, Clone)]
 pub struct Shexml {
     pub declarations: Declaration0,
@@ -107,3 +105,41 @@ pub struct DataValue {
 pub struct Reference {
     pub identifier: Identifier,
 }
+
+pub type Attribute1 = Vec<Attribute>;
+
+pub type Declaration0 = Option<Declaration1>;
+
+pub type Declaration1 = Vec<Declaration>;
+
+pub type Identifier = String;
+
+pub type Iterator0 = Option<Iterator1>;
+
+pub type Iterator1 = Vec<Box<Iterator>>;
+
+pub type Namespace = String;
+
+pub type NamespaceOpt = Option<Namespace>;
+
+pub type Nestedterator0 = Option<Nestedterator1>;
+
+pub type Nestedterator1 = Vec<Nestedterator>;
+
+pub type Path = String;
+
+pub type Path1 = Vec<Path>;
+
+pub type PathLiteral = String;
+
+pub type PredicateObject0 = Option<PredicateObject1>;
+
+pub type PredicateObject1 = Vec<PredicateObject>;
+
+pub type Shape0 = Option<Shape1>;
+
+pub type Shape1 = Vec<Shape>;
+
+pub type ShapePath = String;
+
+pub type Uri = String;
