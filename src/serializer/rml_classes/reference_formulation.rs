@@ -1,5 +1,5 @@
 #[derive(Debug)]
-enum ReferenceFormulation {
+pub enum ReferenceFormulation {
     XPath,
     JSONPath,
 }

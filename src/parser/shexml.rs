@@ -9,7 +9,7 @@ use rustemo::regex::Regex;
 use rustemo::once_cell::sync::Lazy;
 use rustemo::StringLexer;
 use rustemo::LRBuilder;
-use super::shexml_actions;
+use super::{ast, shexml_actions};
 use rustemo::{LRParser, LRContext};
 use rustemo::Action::{self, Shift, Reduce, Accept};
 #[allow(unused_imports)]
@@ -498,45 +498,45 @@ pub enum Terminal {
     AtSign,
     Dots,
     Semicolon,
-    Namespace(shexml_actions::Namespace),
-    Identifier(shexml_actions::Identifier),
-    PathLiteral(shexml_actions::PathLiteral),
-    Path(shexml_actions::Path),
-    ShapePath(shexml_actions::ShapePath),
-    Uri(shexml_actions::Uri),
+    Namespace(ast::Namespace),
+    Identifier(ast::Identifier),
+    PathLiteral(ast::PathLiteral),
+    Path(ast::Path),
+    ShapePath(ast::ShapePath),
+    Uri(ast::Uri),
 }
 #[derive(Debug)]
 pub enum NonTerminal {
-    Shexml(crate::parser::ast::Shexml),
-    Declaration1(shexml_actions::Declaration1),
-    Declaration0(shexml_actions::Declaration0),
-    Shape1(shexml_actions::Shape1),
-    Shape0(shexml_actions::Shape0),
-    Declaration(crate::parser::ast::Declaration),
-    Prefix(crate::parser::ast::Prefix),
-    Source(crate::parser::ast::Source),
-    Expression(crate::parser::ast::Expression),
-    Path1(shexml_actions::Path1),
-    Iterator(crate::parser::ast::Iterator),
-    Attribute1(shexml_actions::Attribute1),
-    Nestedterator1(shexml_actions::Nestedterator1),
-    Nestedterator0(shexml_actions::Nestedterator0),
-    Nestedterator(crate::parser::ast::Nestedterator),
-    Iterator1(shexml_actions::Iterator1),
-    Iterator0(shexml_actions::Iterator0),
-    Attribute(crate::parser::ast::Attribute),
-    Shape(crate::parser::ast::Shape),
-    PredicateObject1(shexml_actions::PredicateObject1),
-    PredicateObject0(shexml_actions::PredicateObject0),
-    Subject(crate::parser::ast::Subject),
-    Class(crate::parser::ast::Class),
-    SubjectIdentifier(crate::parser::ast::SubjectIdentifier),
-    NamespaceOpt(shexml_actions::NamespaceOpt),
-    PredicateObject(crate::parser::ast::PredicateObject),
-    Predicate(crate::parser::ast::Predicate),
-    Object(crate::parser::ast::Object),
-    DataValue(crate::parser::ast::DataValue),
-    Reference(crate::parser::ast::Reference),
+    Shexml(ast::Shexml),
+    Declaration1(ast::Declaration1),
+    Declaration0(ast::Declaration0),
+    Shape1(ast::Shape1),
+    Shape0(ast::Shape0),
+    Declaration(ast::Declaration),
+    Prefix(ast::Prefix),
+    Source(ast::Source),
+    Expression(ast::Expression),
+    Path1(ast::Path1),
+    Iterator(ast::Iterator),
+    Attribute1(ast::Attribute1),
+    Nestedterator1(ast::NestedIterator1),
+    Nestedterator0(ast::NestedIterator0),
+    Nestedterator(ast::NestedIterator),
+    Iterator1(ast::Iterator1),
+    Iterator0(ast::Iterator0),
+    Attribute(ast::Attribute),
+    Shape(ast::Shape),
+    PredicateObject1(ast::PredicateObject1),
+    PredicateObject0(ast::PredicateObject0),
+    Subject(ast::Subject),
+    Class(ast::Class),
+    SubjectIdentifier(ast::SubjectIdentifier),
+    NamespaceOpt(ast::NamespaceOpt),
+    PredicateObject(ast::PredicateObject),
+    Predicate(ast::Predicate),
+    Object(ast::Object),
+    DataValue(ast::DataValue),
+    Reference(ast::Reference),
 }
 type ActionFn = fn(token: TokenKind) -> Vec<Action<State, ProdKind>>;
 pub struct ShexmlParserDefinition {
@@ -2232,7 +2232,7 @@ impl DefaultBuilder {
     }
 }
 impl Builder for DefaultBuilder {
-    type Output = crate::parser::ast::Shexml;
+    type Output = ast::Shexml;
     fn get_result(&mut self) -> Self::Output {
         match self.res_stack.pop().unwrap() {
             Symbol::NonTerminal(NonTerminal::Shexml(r)) => r,

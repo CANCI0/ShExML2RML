@@ -1,4 +1,4 @@
 #[derive(Debug)]
-struct PredicateMap {
+pub struct PredicateMap {
     constant: String,
 }

@@ -1,2 +1,2 @@
 pub mod abstract_visitor;
-mod rml_ast;
+pub mod rml_classes;

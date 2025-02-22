@@ -112,7 +112,7 @@ pub fn iterator_c1(
     path_type: PathLiteral,
     path: Path,
     fields: Attribute1,
-    iterators: Nestedterator0,
+    iterators: NestedIterator0,
 ) -> Iterator {
     Iterator {
         identifier,
@@ -137,26 +137,26 @@ pub fn attribute1_attribute(_ctx: &Ctx, attribute: Attribute) -> Attribute1 {
 
 pub fn nestedterator1_c1(
     _ctx: &Ctx,
-    mut nestedterator1: Nestedterator1,
-    nestedterator: Nestedterator,
-) -> Nestedterator1 {
+    mut nestedterator1: NestedIterator1,
+    nestedterator: NestedIterator,
+) -> NestedIterator1 {
     nestedterator1.push(nestedterator);
     nestedterator1
 }
 pub fn nestedterator1_nestedterator(
     _ctx: &Ctx,
-    nestedterator: Nestedterator,
-) -> Nestedterator1 {
+    nestedterator: NestedIterator,
+) -> NestedIterator1 {
     vec![nestedterator]
 }
 
 pub fn nestedterator0_nestedterator1(
     _ctx: &Ctx,
-    nestedterator1: Nestedterator1,
-) -> Nestedterator0 {
+    nestedterator1: NestedIterator1,
+) -> NestedIterator0 {
     Some(nestedterator1)
 }
-pub fn nestedterator0_empty(_ctx: &Ctx) -> Nestedterator0 {
+pub fn nestedterator0_empty(_ctx: &Ctx) -> NestedIterator0 {
     None
 }
 
@@ -166,8 +166,8 @@ pub fn nestedterator_c1(
     path: Path,
     fields: Attribute1,
     iterators: Iterator0,
-) -> Nestedterator {
-    Nestedterator {
+) -> NestedIterator {
+    NestedIterator {
         identifier,
         path,
         fields,

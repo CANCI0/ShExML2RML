@@ -1,4 +1,4 @@
 #[derive(Debug)]
-struct SubjectMap {
+pub struct SubjectMap {
     template: String
 }
