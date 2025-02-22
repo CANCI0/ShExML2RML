@@ -8,3 +8,13 @@ pub struct TriplesMap {
     pub subject_maps: SubjectMap,
 }
 
+impl TriplesMap {
+    pub fn new() -> TriplesMap {
+        TriplesMap{
+            id: String::from("m_2"),
+            logical_source: LogicalSource::new(),
+            predicate_object_maps: vec![],
+            subject_maps: SubjectMap::new(),
+        }
+    }
+}

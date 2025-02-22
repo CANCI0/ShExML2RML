@@ -17,7 +17,7 @@ impl fmt::Display for ObjectMap {
         }
 
         if let Some(term_type) = &self.term_type {
-            writeln!(f, "                      rr:termType  {} ;", term_type)?;
+            writeln!(f, "                      rr:termType  rr:{} ;", term_type)?;
         }
 
         if let Some(parent_map) = &self.parent_triples_map {
