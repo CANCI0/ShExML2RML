@@ -10,20 +10,20 @@ pub struct ObjectMap {
 
 impl fmt::Display for ObjectMap {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "rr:objectMap     [ a rr:ObjectMap ;")?;
+        writeln!(f, "rr:objectMap     [ a                    rr:ObjectMap ;")?;
 
         if let Some(template) = &self.template {
-            writeln!(f, "                      rr:template  \"{}\" ;", template)?;
+        writeln!(f, "                   rr:template          \"{}\" ;", template)?;
         }
 
         if let Some(term_type) = &self.term_type {
-            writeln!(f, "                      rr:termType  rr:{} ;", term_type)?;
+        writeln!(f, "                   rr:termType          rr:{} ;", term_type)?;
         }
 
         if let Some(parent_map) = &self.parent_triples_map {
-            writeln!(f, "                      rr:parentTriplesMap  map:{} ;", parent_map.id)?;
+        writeln!(f, "                   rr:parentTriplesMap  map:{} ;", parent_map.id)?;
         }
 
-        writeln!(f, "                 ] ;")
+        write!(f, "                 ] ;")
     }
 }
