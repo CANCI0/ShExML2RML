@@ -1,7 +1,7 @@
 use std::fmt;
 use std::fmt::Formatter;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PredicateMap {
     pub(crate) id: String,
     constant: String,

@@ -1,7 +1,7 @@
 use std::fmt;
 use std::fmt::Formatter;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ReferenceFormulation {
     XPath,
     JSONPath,

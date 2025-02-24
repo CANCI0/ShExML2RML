@@ -1,7 +1,7 @@
 use std::fmt;
 use crate::serializer::rml_classes::{TermType, TriplesMap};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ObjectMap {
     pub id: String,
     pub template: Option<String>,

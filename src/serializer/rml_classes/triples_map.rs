@@ -2,7 +2,7 @@ use std::fmt;
 use std::fmt::Formatter;
 use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, SubjectMap};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TriplesMap {
     pub id: String,
     pub logical_source: LogicalSource,

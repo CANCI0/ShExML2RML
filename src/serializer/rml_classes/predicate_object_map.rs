@@ -2,7 +2,7 @@ use std::fmt;
 use std::fmt::Formatter;
 use crate::serializer::rml_classes::{ObjectMap, PredicateMap};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PredicateObjectMap {
     pub id: String,
     object_map: ObjectMap,

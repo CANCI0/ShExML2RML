@@ -3,7 +3,7 @@ use std::fmt::Formatter;
 use crate::serializer::rml_classes::ReferenceFormulation;
 use indoc::indoc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LogicalSource {
     pub id: String,
     iterator: String,

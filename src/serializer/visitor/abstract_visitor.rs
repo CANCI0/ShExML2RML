@@ -1,6 +1,7 @@
 use crate::parser::ast::*;
 
 pub trait Visitor<T> where T: Default{
+
     fn visit_shexml(&mut self, n: &Shexml) -> T {
         if let Some(declarations) = &n.declarations {
             for decl in declarations {

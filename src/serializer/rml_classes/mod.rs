@@ -6,6 +6,8 @@ pub mod reference_formulation;
 pub mod subject_map;
 pub mod term_type;
 pub mod triples_map;
+mod rml_node;
+mod namespace_prefix;
 
 pub use logical_source::LogicalSource;
 pub use object_map::ObjectMap;
@@ -15,3 +17,5 @@ pub use reference_formulation::ReferenceFormulation;
 pub use subject_map::SubjectMap;
 pub use term_type::TermType;
 pub use triples_map::TriplesMap;
+pub use rml_node::RmlNode;
+pub use namespace_prefix::NamespacePrefix;
