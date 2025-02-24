@@ -3,12 +3,14 @@ use std::fmt::Formatter;
 
 #[derive(Debug)]
 pub struct PredicateMap {
+    pub(crate) id: String,
     constant: String,
 }
 
 impl PredicateMap {
     pub fn new() -> PredicateMap {
         PredicateMap {
+            id: String::from("p_3"),
             constant: String::from(":year"),
         }
     }
@@ -16,8 +18,11 @@ impl PredicateMap {
 
 impl fmt::Display for PredicateMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        writeln!(f, "rr:predicateMap  [ a            rr:predicateMap ;");
-        writeln!(f, "                   rr:constant  {}", self.constant);
-        write!(f, "                 ]")
+        let mut result = String::new();
+
+        result.push_str(&format!("map:{}  a           rr:predicateMap ;\n", self.id));
+        result.push_str(&format!("        rr:constant  {} .", self.constant));
+
+        writeln!(f, "{}", result)
     }
 }
