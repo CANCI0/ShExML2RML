@@ -1,13 +1,9 @@
 Shexml:
-    declarations=Declaration*
+    prefixes=Prefix*
+    sources=Source*
+    iterators=Iterator*
+    expressions=Expression*
     shapes=Shape*
-    ;
-
-Declaration:
-    Prefix
-    | Source
-    | Expression
-    | Iterator
     ;
 
 Prefix:
@@ -38,7 +34,7 @@ NestedIterator:
     IteratorLiteral identifier=Identifier "<" path=Path ">"
     "{"
         fields=Attribute+
-        iterators=Iterator*
+        iterators=NestedIterator*
     "}"
     ;
 

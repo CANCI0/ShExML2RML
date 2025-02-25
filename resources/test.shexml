@@ -37,6 +37,7 @@ ITERATOR film_json <jsonpath: $.films[*]> {
         FIELD role <role>
     }
 }
+
 EXPRESSION films <films_xml_file.film_xml UNION films_json_file.film_json>
 
 :Films :[films.id] {

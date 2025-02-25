@@ -32,32 +32,94 @@ pub fn uri(_ctx: &Ctx, token: Token) -> Uri {
 }
 #[derive(Debug, Clone)]
 pub struct Shexml {
-    pub declarations: Declaration0,
+    pub prefixes: Prefix0,
+    pub sources: Source0,
+    pub iterators: Iterator0,
+    pub expressions: Expression0,
     pub shapes: Shape0,
 }
-pub fn shexml_c1(_ctx: &Ctx, declarations: Declaration0, shapes: Shape0) -> Shexml {
-    Shexml { declarations, shapes }
-}
-pub type Declaration1 = Vec<Declaration>;
-pub fn declaration1_c1(
+pub fn shexml_c1(
     _ctx: &Ctx,
-    mut declaration1: Declaration1,
-    declaration: Declaration,
-) -> Declaration1 {
-    declaration1.push(declaration);
-    declaration1
+    prefixes: Prefix0,
+    sources: Source0,
+    iterators: Iterator0,
+    expressions: Expression0,
+    shapes: Shape0,
+) -> Shexml {
+    Shexml {
+        prefixes,
+        sources,
+        iterators,
+        expressions,
+        shapes,
+    }
 }
-pub fn declaration1_declaration(_ctx: &Ctx, declaration: Declaration) -> Declaration1 {
-    vec![declaration]
+pub type Prefix1 = Vec<Prefix>;
+pub fn prefix1_c1(_ctx: &Ctx, mut prefix1: Prefix1, prefix: Prefix) -> Prefix1 {
+    prefix1.push(prefix);
+    prefix1
 }
-pub type Declaration0 = Option<Declaration1>;
-pub fn declaration0_declaration1(
+pub fn prefix1_prefix(_ctx: &Ctx, prefix: Prefix) -> Prefix1 {
+    vec![prefix]
+}
+pub type Prefix0 = Option<Prefix1>;
+pub fn prefix0_prefix1(_ctx: &Ctx, prefix1: Prefix1) -> Prefix0 {
+    Some(prefix1)
+}
+pub fn prefix0_empty(_ctx: &Ctx) -> Prefix0 {
+    None
+}
+pub type Source1 = Vec<Source>;
+pub fn source1_c1(_ctx: &Ctx, mut source1: Source1, source: Source) -> Source1 {
+    source1.push(source);
+    source1
+}
+pub fn source1_source(_ctx: &Ctx, source: Source) -> Source1 {
+    vec![source]
+}
+pub type Source0 = Option<Source1>;
+pub fn source0_source1(_ctx: &Ctx, source1: Source1) -> Source0 {
+    Some(source1)
+}
+pub fn source0_empty(_ctx: &Ctx) -> Source0 {
+    None
+}
+pub type Iterator1 = Vec<Iterator>;
+pub fn iterator1_c1(
     _ctx: &Ctx,
-    declaration1: Declaration1,
-) -> Declaration0 {
-    Some(declaration1)
+    mut iterator1: Iterator1,
+    iterator: Iterator,
+) -> Iterator1 {
+    iterator1.push(iterator);
+    iterator1
 }
-pub fn declaration0_empty(_ctx: &Ctx) -> Declaration0 {
+pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator) -> Iterator1 {
+    vec![iterator]
+}
+pub type Iterator0 = Option<Iterator1>;
+pub fn iterator0_iterator1(_ctx: &Ctx, iterator1: Iterator1) -> Iterator0 {
+    Some(iterator1)
+}
+pub fn iterator0_empty(_ctx: &Ctx) -> Iterator0 {
+    None
+}
+pub type Expression1 = Vec<Expression>;
+pub fn expression1_c1(
+    _ctx: &Ctx,
+    mut expression1: Expression1,
+    expression: Expression,
+) -> Expression1 {
+    expression1.push(expression);
+    expression1
+}
+pub fn expression1_expression(_ctx: &Ctx, expression: Expression) -> Expression1 {
+    vec![expression]
+}
+pub type Expression0 = Option<Expression1>;
+pub fn expression0_expression1(_ctx: &Ctx, expression1: Expression1) -> Expression0 {
+    Some(expression1)
+}
+pub fn expression0_empty(_ctx: &Ctx) -> Expression0 {
     None
 }
 pub type Shape1 = Vec<Shape>;
@@ -74,25 +136,6 @@ pub fn shape0_shape1(_ctx: &Ctx, shape1: Shape1) -> Shape0 {
 }
 pub fn shape0_empty(_ctx: &Ctx) -> Shape0 {
     None
-}
-#[derive(Debug, Clone)]
-pub enum Declaration {
-    Prefix(Prefix),
-    Source(Source),
-    Expression(Expression),
-    Iterator(Iterator),
-}
-pub fn declaration_prefix(_ctx: &Ctx, prefix: Prefix) -> Declaration {
-    Declaration::Prefix(prefix)
-}
-pub fn declaration_source(_ctx: &Ctx, source: Source) -> Declaration {
-    Declaration::Source(source)
-}
-pub fn declaration_expression(_ctx: &Ctx, expression: Expression) -> Declaration {
-    Declaration::Expression(expression)
-}
-pub fn declaration_iterator(_ctx: &Ctx, iterator: Iterator) -> Declaration {
-    Declaration::Iterator(iterator)
 }
 #[derive(Debug, Clone)]
 pub struct Prefix {
@@ -218,40 +261,21 @@ pub struct NestedIterator {
     pub identifier: Identifier,
     pub path: Path,
     pub fields: Attribute1,
-    pub iterators: Iterator0,
+    pub iterators: Box<NestedIterator0>,
 }
 pub fn nested_iterator_c1(
     _ctx: &Ctx,
     identifier: Identifier,
     path: Path,
     fields: Attribute1,
-    iterators: Iterator0,
+    iterators: NestedIterator0,
 ) -> NestedIterator {
     NestedIterator {
         identifier,
         path,
         fields,
-        iterators,
+        iterators: Box::new(iterators),
     }
-}
-pub type Iterator1 = Vec<Box<Iterator>>;
-pub fn iterator1_c1(
-    _ctx: &Ctx,
-    mut iterator1: Iterator1,
-    iterator: Iterator,
-) -> Iterator1 {
-    iterator1.push(Box::new(iterator));
-    iterator1
-}
-pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator) -> Iterator1 {
-    vec![Box::new(iterator)]
-}
-pub type Iterator0 = Option<Iterator1>;
-pub fn iterator0_iterator1(_ctx: &Ctx, iterator1: Iterator1) -> Iterator0 {
-    Some(iterator1)
-}
-pub fn iterator0_empty(_ctx: &Ctx) -> Iterator0 {
-    None
 }
 #[derive(Debug, Clone)]
 pub struct Attribute {

@@ -3,26 +3,32 @@ use crate::parser::shexml_actions::*;
 pub trait Visitor<T> where T: Default{
 
     fn visit_shexml(&mut self, n: &Shexml) -> T {
-        if let Some(declarations) = &n.declarations {
-            for decl in declarations {
-                self.visit_declaration(decl);
+        if let Some(prefixes) = &n.prefixes {
+            for decl in prefixes {
+                self.visit_prefix(decl);
+            }
+        }
+        if let Some(sources) = &n.sources {
+            for decl in sources {
+                self.visit_source(decl);
+            }
+        }
+        if let Some(iterators) = &n.iterators {
+            for decl in iterators {
+                self.visit_iterator(decl);
+            }
+        }
+        if let Some(expressions) = &n.expressions {
+            for decl in expressions {
+                self.visit_expression(decl);
             }
         }
         if let Some(shapes) = &n.shapes {
-            for shape in shapes {
-                self.visit_shape(shape);
+            for decl in shapes {
+                self.visit_shape(decl);
             }
         }
         T::default()
-    }
-
-    fn visit_declaration(&mut self, n: &Declaration) -> T {
-        match n {
-            Declaration::Prefix(p) => self.visit_prefix(p),
-            Declaration::Source(s) => self.visit_source(s),
-            Declaration::Expression(e) => self.visit_expression(e),
-            Declaration::Iterator(i) => self.visit_iterator(i),
-        }
     }
 
     fn visit_prefix(&mut self, _: &Prefix) -> T {
@@ -53,9 +59,9 @@ pub trait Visitor<T> where T: Default{
         for field in &n.fields {
             self.visit_attribute(field);
         }
-        if let Some(iterators) = &n.iterators {
-            for it in iterators {
-                self.visit_iterator(it);
+        if let Some(nested) = n.iterators.as_ref().as_ref() {
+            for nested_iterator in nested {
+                self.visit_nested_iterator(nested_iterator);
             }
         }
         T::default()
