@@ -16,7 +16,7 @@ fn main() {
     println!("{:#?}", shexml);
 
     let mut visitor = TranspileVisitor::new();
-    visitor.visit_shexml(&shexml);
+    visitor.visit_shexml(&shexml, &None);
 
     for node in &visitor.rml_code {
         println!("{}", node);

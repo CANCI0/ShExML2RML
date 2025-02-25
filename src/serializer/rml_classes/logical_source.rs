@@ -1,26 +1,34 @@
 use std::fmt;
 use std::fmt::Formatter;
-use crate::serializer::rml_classes::ReferenceFormulation;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use indoc::indoc;
+use once_cell::sync::Lazy;
+use crate::serializer::rml_classes::ReferenceFormulation;
 
-#[derive(Debug, Clone)]
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
+
+#[derive(Clone, Debug)]
 pub struct LogicalSource {
     pub id: String,
-    iterator: String,
-    reference_formulation: ReferenceFormulation,
-    source: String,
+    pub iterator: String,
+    pub reference_formulation: ReferenceFormulation,
+    pub source: String,
 }
 
 impl LogicalSource {
-    pub fn new() -> LogicalSource {
-        LogicalSource{
-            id: String::from("l_260963552"),
-            iterator: String::from("//film/cast/actress"),
-            reference_formulation: ReferenceFormulation::XPath,
-            source: String::from("https://shexml.herminiogarcia.com/files/films.xml"),
+    pub fn new(iterator: String, reference_formulation: ReferenceFormulation, source: String) -> Self {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
+        LogicalSource {
+            id,
+            iterator,
+            reference_formulation,
+            source,
         }
     }
 }
+
 
 impl fmt::Display for LogicalSource {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {

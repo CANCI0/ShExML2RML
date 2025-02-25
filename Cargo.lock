@@ -321,6 +321,7 @@ name = "rust-shexml-interpreter"
 version = "0.1.0"
 dependencies = [
  "indoc",
+ "once_cell",
  "rustemo",
  "rustemo-compiler",
 ]

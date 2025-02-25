@@ -1,6 +1,6 @@
 use std::fmt;
 use std::fmt::Formatter;
-use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, SubjectMap};
+use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, ReferenceFormulation, SubjectMap};
 
 #[derive(Debug, Clone)]
 pub struct TriplesMap {
@@ -14,7 +14,11 @@ impl TriplesMap {
     pub fn new() -> TriplesMap {
         TriplesMap{
             id: String::from("m_2"),
-            logical_source: LogicalSource::new(),
+            logical_source: LogicalSource::new(
+                String::from("//film"),
+                ReferenceFormulation::XPath,
+                String::from("http://shexml.herminiogarcia.com/files/films.xml"),
+            ),
             predicate_object_maps: vec![],
             subject_map: SubjectMap::new(),
         }
