@@ -21,7 +21,7 @@ pub type Input = str;
 const STATE_COUNT: usize = 97usize;
 const MAX_RECOGNIZERS: usize = 7usize;
 #[allow(dead_code)]
-const TERMINAL_COUNT: usize = 22usize;
+const TERMINAL_COUNT: usize = 23usize;
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
@@ -45,6 +45,7 @@ pub enum TokenKind {
     Namespace,
     Identifier,
     PathLiteral,
+    Path,
     ShapePath,
     Uri,
     Dot,
@@ -74,9 +75,9 @@ pub enum ProdKind {
     PrefixP1,
     SourceP1,
     ExpressionP1,
-    Path1P1,
-    Path1P2,
-    PathP1,
+    IteratorFileRelation1P1,
+    IteratorFileRelation1P2,
+    IteratorFileRelationP1,
     IteratorP1,
     Attribute1P1,
     Attribute1P2,
@@ -127,11 +128,17 @@ impl std::fmt::Debug for ProdKind {
             ProdKind::PrefixP1 => "Prefix: PrefixLiteral Namespace OpenTag Uri CloseTag",
             ProdKind::SourceP1 => "Source: SourceLiteral Identifier OpenTag Uri CloseTag",
             ProdKind::ExpressionP1 => {
-                "Expression: ExpressionLiteral Identifier OpenTag Path1 CloseTag"
+                "Expression: ExpressionLiteral Identifier OpenTag IteratorFileRelation1 CloseTag"
             }
-            ProdKind::Path1P1 => "Path1: Path1 UnionLiteral Path",
-            ProdKind::Path1P2 => "Path1: Path",
-            ProdKind::PathP1 => "Path: Identifier Dot Identifier",
+            ProdKind::IteratorFileRelation1P1 => {
+                "IteratorFileRelation1: IteratorFileRelation1 UnionLiteral IteratorFileRelation"
+            }
+            ProdKind::IteratorFileRelation1P2 => {
+                "IteratorFileRelation1: IteratorFileRelation"
+            }
+            ProdKind::IteratorFileRelationP1 => {
+                "IteratorFileRelation: Identifier Dot Identifier"
+            }
             ProdKind::IteratorP1 => {
                 "Iterator: IteratorLiteral Identifier OpenTag PathLiteral Path CloseTag OpenBrace Attribute1 NestedIterator0 CloseBrace"
             }
@@ -194,8 +201,8 @@ pub enum NonTermKind {
     Prefix,
     Source,
     Expression,
-    Path1,
-    Path,
+    IteratorFileRelation1,
+    IteratorFileRelation,
     Iterator,
     Attribute1,
     NestedIterator1,
@@ -236,9 +243,9 @@ impl From<ProdKind> for NonTermKind {
             ProdKind::PrefixP1 => NonTermKind::Prefix,
             ProdKind::SourceP1 => NonTermKind::Source,
             ProdKind::ExpressionP1 => NonTermKind::Expression,
-            ProdKind::Path1P1 => NonTermKind::Path1,
-            ProdKind::Path1P2 => NonTermKind::Path1,
-            ProdKind::PathP1 => NonTermKind::Path,
+            ProdKind::IteratorFileRelation1P1 => NonTermKind::IteratorFileRelation1,
+            ProdKind::IteratorFileRelation1P2 => NonTermKind::IteratorFileRelation1,
+            ProdKind::IteratorFileRelationP1 => NonTermKind::IteratorFileRelation,
             ProdKind::IteratorP1 => NonTermKind::Iterator,
             ProdKind::Attribute1P1 => NonTermKind::Attribute1,
             ProdKind::Attribute1P2 => NonTermKind::Attribute1,
@@ -313,8 +320,8 @@ pub enum State {
     UriS35,
     PathLiteralS36,
     IdentifierS37,
-    Path1S38,
-    PathS39,
+    IteratorFileRelation1S38,
+    IteratorFileRelationS39,
     NamespaceS40,
     PredicateObject1S41,
     PredicateObject0S42,
@@ -338,7 +345,7 @@ pub enum State {
     ShapePathS60,
     CloseTagS61,
     IdentifierS62,
-    PathS63,
+    IteratorFileRelationS63,
     DotsS64,
     OpenBracketS65,
     SemicolonS66,
@@ -424,8 +431,8 @@ impl std::fmt::Debug for State {
             State::UriS35 => "35:Uri",
             State::PathLiteralS36 => "36:PathLiteral",
             State::IdentifierS37 => "37:Identifier",
-            State::Path1S38 => "38:Path1",
-            State::PathS39 => "39:Path",
+            State::IteratorFileRelation1S38 => "38:IteratorFileRelation1",
+            State::IteratorFileRelationS39 => "39:IteratorFileRelation",
             State::NamespaceS40 => "40:Namespace",
             State::PredicateObject1S41 => "41:PredicateObject1",
             State::PredicateObject0S42 => "42:PredicateObject0",
@@ -449,7 +456,7 @@ impl std::fmt::Debug for State {
             State::ShapePathS60 => "60:ShapePath",
             State::CloseTagS61 => "61:CloseTag",
             State::IdentifierS62 => "62:Identifier",
-            State::PathS63 => "63:Path",
+            State::IteratorFileRelationS63 => "63:IteratorFileRelation",
             State::DotsS64 => "64:Dots",
             State::OpenBracketS65 => "65:OpenBracket",
             State::SemicolonS66 => "66:Semicolon",
@@ -513,6 +520,7 @@ pub enum Terminal {
     Namespace(shexml_actions::Namespace),
     Identifier(shexml_actions::Identifier),
     PathLiteral(shexml_actions::PathLiteral),
+    Path(shexml_actions::Path),
     ShapePath(shexml_actions::ShapePath),
     Uri(shexml_actions::Uri),
     Dot,
@@ -528,8 +536,8 @@ pub enum NonTerminal {
     Prefix(shexml_actions::Prefix),
     Source(shexml_actions::Source),
     Expression(shexml_actions::Expression),
-    Path1(shexml_actions::Path1),
-    Path(shexml_actions::Path),
+    IteratorFileRelation1(shexml_actions::IteratorFileRelation1),
+    IteratorFileRelation(shexml_actions::IteratorFileRelation),
     Iterator(shexml_actions::Iterator),
     Attribute1(shexml_actions::Attribute1),
     NestedIterator1(shexml_actions::NestedIterator1),
@@ -822,7 +830,7 @@ fn action_uri_s35(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_pathliteral_s36(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS37)]),
+        TK::Path => Vec::from(&[Shift(State::PathS48)]),
         _ => vec![],
     }
 }
@@ -832,17 +840,21 @@ fn action_identifier_s37(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> 
         _ => vec![],
     }
 }
-fn action_path1_s38(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_iteratorfilerelation1_s38(
+    token_kind: TokenKind,
+) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::UnionLiteral => Vec::from(&[Shift(State::UnionLiteralS50)]),
         TK::CloseTag => Vec::from(&[Shift(State::CloseTagS51)]),
         _ => vec![],
     }
 }
-fn action_path_s39(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_iteratorfilerelation_s39(
+    token_kind: TokenKind,
+) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::UnionLiteral => Vec::from(&[Reduce(PK::Path1P2, 1usize)]),
-        TK::CloseTag => Vec::from(&[Reduce(PK::Path1P2, 1usize)]),
+        TK::UnionLiteral => Vec::from(&[Reduce(PK::IteratorFileRelation1P2, 1usize)]),
+        TK::CloseTag => Vec::from(&[Reduce(PK::IteratorFileRelation1P2, 1usize)]),
         _ => vec![],
     }
 }
@@ -1003,15 +1015,17 @@ fn action_closetag_s61(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_identifier_s62(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::UnionLiteral => Vec::from(&[Reduce(PK::PathP1, 3usize)]),
-        TK::CloseTag => Vec::from(&[Reduce(PK::PathP1, 3usize)]),
+        TK::UnionLiteral => Vec::from(&[Reduce(PK::IteratorFileRelationP1, 3usize)]),
+        TK::CloseTag => Vec::from(&[Reduce(PK::IteratorFileRelationP1, 3usize)]),
         _ => vec![],
     }
 }
-fn action_path_s63(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_iteratorfilerelation_s63(
+    token_kind: TokenKind,
+) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::UnionLiteral => Vec::from(&[Reduce(PK::Path1P1, 3usize)]),
-        TK::CloseTag => Vec::from(&[Reduce(PK::Path1P1, 3usize)]),
+        TK::UnionLiteral => Vec::from(&[Reduce(PK::IteratorFileRelation1P1, 3usize)]),
+        TK::CloseTag => Vec::from(&[Reduce(PK::IteratorFileRelation1P1, 3usize)]),
         _ => vec![],
     }
 }
@@ -1128,7 +1142,7 @@ fn action_attribute_s80(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_opentag_s81(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS37)]),
+        TK::Path => Vec::from(&[Shift(State::PathS85)]),
         _ => vec![],
     }
 }
@@ -1165,7 +1179,7 @@ fn action_path_s85(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_opentag_s86(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS37)]),
+        TK::Path => Vec::from(&[Shift(State::PathS88)]),
         _ => vec![],
     }
 }
@@ -1312,8 +1326,8 @@ fn goto_class_s23(nonterm_kind: NonTermKind) -> State {
 }
 fn goto_opentag_s27(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::Path1 => State::Path1S38,
-        NonTermKind::Path => State::PathS39,
+        NonTermKind::IteratorFileRelation1 => State::IteratorFileRelation1S38,
+        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS39,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
@@ -1332,17 +1346,6 @@ fn goto_openbrace_s30(nonterm_kind: NonTermKind) -> State {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
                 State::OpenBraceS30
-            )
-        }
-    }
-}
-fn goto_pathliteral_s36(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::Path => State::PathS48,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::PathLiteralS36
             )
         }
     }
@@ -1375,7 +1378,7 @@ fn goto_predicate_s44(nonterm_kind: NonTermKind) -> State {
 }
 fn goto_unionliteral_s50(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::Path => State::PathS63,
+        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS63,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
@@ -1417,28 +1420,6 @@ fn goto_nestediterator1_s77(nonterm_kind: NonTermKind) -> State {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
                 State::NestedIterator1S77
-            )
-        }
-    }
-}
-fn goto_opentag_s81(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::Path => State::PathS85,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenTagS81
-            )
-        }
-    }
-}
-fn goto_opentag_s86(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::Path => State::PathS88,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenTagS86
             )
         }
     }
@@ -1523,8 +1504,8 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         action_uri_s35,
         action_pathliteral_s36,
         action_identifier_s37,
-        action_path1_s38,
-        action_path_s39,
+        action_iteratorfilerelation1_s38,
+        action_iteratorfilerelation_s39,
         action_namespace_s40,
         action_predicateobject1_s41,
         action_predicateobject0_s42,
@@ -1548,7 +1529,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         action_shapepath_s60,
         action_closetag_s61,
         action_identifier_s62,
-        action_path_s63,
+        action_iteratorfilerelation_s63,
         action_dots_s64,
         action_openbracket_s65,
         action_semicolon_s66,
@@ -1620,7 +1601,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_pathliteral_s36,
+        goto_invalid,
         goto_invalid,
         goto_invalid,
         goto_invalid,
@@ -1665,12 +1646,12 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_opentag_s81,
         goto_invalid,
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_opentag_s86,
+        goto_invalid,
+        goto_invalid,
         goto_invalid,
         goto_invalid,
         goto_invalid,
@@ -1839,7 +1820,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         [Some((TK::OpenBracket, true)), None, None, None, None, None, None],
         [Some((TK::CloseTag, true)), None, None, None, None, None, None],
         [Some((TK::CloseTag, true)), None, None, None, None, None, None],
-        [Some((TK::Identifier, false)), None, None, None, None, None, None],
+        [Some((TK::Path, false)), None, None, None, None, None, None],
         [Some((TK::Dot, true)), None, None, None, None, None, None],
         [
             Some((TK::UnionLiteral, true)),
@@ -2036,7 +2017,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             None,
             None,
         ],
-        [Some((TK::Identifier, false)), None, None, None, None, None, None],
+        [Some((TK::Path, false)), None, None, None, None, None, None],
         [Some((TK::OpenTag, true)), None, None, None, None, None, None],
         [
             Some((TK::IteratorLiteral, true)),
@@ -2057,7 +2038,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::Namespace, false)),
         ],
         [Some((TK::CloseTag, true)), None, None, None, None, None, None],
-        [Some((TK::Identifier, false)), None, None, None, None, None, None],
+        [Some((TK::Path, false)), None, None, None, None, None, None],
         [
             Some((TK::IteratorLiteral, true)),
             Some((TK::FieldLiteral, true)),
@@ -2296,6 +2277,14 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
         ),
     ),
     TokenRecognizer(
+        TokenKind::Path,
+        Recognizer::RegexMatch(
+            Lazy::new(|| {
+                Regex::new(concat!("^", "[/.@\\$\\[\\]a-zA-Z0-9_\\*\\-'\"]+")).unwrap()
+            }),
+        ),
+    ),
+    TokenRecognizer(
         TokenKind::ShapePath,
         Recognizer::RegexMatch(
             Lazy::new(|| { Regex::new(concat!("^", "[/.a-zA-Z0-9_\\*\\-]+")).unwrap() }),
@@ -2361,6 +2350,7 @@ for DefaultBuilder {
             TokenKind::PathLiteral => {
                 Terminal::PathLiteral(shexml_actions::path_literal(context, token))
             }
+            TokenKind::Path => Terminal::Path(shexml_actions::path(context, token)),
             TokenKind::ShapePath => {
                 Terminal::ShapePath(shexml_actions::shape_path(context, token))
             }
@@ -2593,7 +2583,7 @@ for DefaultBuilder {
                         _,
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
-                        Symbol::NonTerminal(NonTerminal::Path1(p1)),
+                        Symbol::NonTerminal(NonTerminal::IteratorFileRelation1(p1)),
                         _,
                     ) => {
                         NonTerminal::Expression(
@@ -2603,33 +2593,42 @@ for DefaultBuilder {
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::Path1P1 => {
+            ProdKind::IteratorFileRelation1P1 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 3usize)
                     .into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (
-                        Symbol::NonTerminal(NonTerminal::Path1(p0)),
+                        Symbol::NonTerminal(NonTerminal::IteratorFileRelation1(p0)),
                         _,
-                        Symbol::NonTerminal(NonTerminal::Path(p1)),
-                    ) => NonTerminal::Path1(shexml_actions::path1_c1(context, p0, p1)),
+                        Symbol::NonTerminal(NonTerminal::IteratorFileRelation(p1)),
+                    ) => {
+                        NonTerminal::IteratorFileRelation1(
+                            shexml_actions::iterator_file_relation1_c1(context, p0, p1),
+                        )
+                    }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::Path1P2 => {
+            ProdKind::IteratorFileRelation1P2 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Path(p0)) => {
-                        NonTerminal::Path1(shexml_actions::path1_path(context, p0))
+                    Symbol::NonTerminal(NonTerminal::IteratorFileRelation(p0)) => {
+                        NonTerminal::IteratorFileRelation1(
+                            shexml_actions::iterator_file_relation1_iterator_file_relation(
+                                context,
+                                p0,
+                            ),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::PathP1 => {
+            ProdKind::IteratorFileRelationP1 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 3usize)
@@ -2639,7 +2638,11 @@ for DefaultBuilder {
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
                         Symbol::Terminal(Terminal::Identifier(p1)),
-                    ) => NonTerminal::Path(shexml_actions::path_c1(context, p0, p1)),
+                    ) => {
+                        NonTerminal::IteratorFileRelation(
+                            shexml_actions::iterator_file_relation_c1(context, p0, p1),
+                        )
+                    }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -2665,7 +2668,7 @@ for DefaultBuilder {
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
                         Symbol::Terminal(Terminal::PathLiteral(p1)),
-                        Symbol::NonTerminal(NonTerminal::Path(p2)),
+                        Symbol::Terminal(Terminal::Path(p2)),
                         _,
                         _,
                         Symbol::NonTerminal(NonTerminal::Attribute1(p3)),
@@ -2783,7 +2786,7 @@ for DefaultBuilder {
                         _,
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
-                        Symbol::NonTerminal(NonTerminal::Path(p1)),
+                        Symbol::Terminal(Terminal::Path(p1)),
                         _,
                         _,
                         Symbol::NonTerminal(NonTerminal::Attribute1(p2)),
@@ -2861,7 +2864,7 @@ for DefaultBuilder {
                         _,
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
-                        Symbol::NonTerminal(NonTerminal::Path(p1)),
+                        Symbol::Terminal(Terminal::Path(p1)),
                         _,
                     ) => {
                         NonTerminal::Attribute(

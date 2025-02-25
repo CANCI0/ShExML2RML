@@ -18,6 +18,10 @@ pub type PathLiteral = String;
 pub fn path_literal(_ctx: &Ctx, token: Token) -> PathLiteral {
     token.value.into()
 }
+pub type Path = String;
+pub fn path(_ctx: &Ctx, token: Token) -> Path {
+    token.value.into()
+}
 pub type ShapePath = String;
 pub fn shape_path(_ctx: &Ctx, token: Token) -> ShapePath {
     token.value.into()
@@ -109,26 +113,44 @@ pub fn source_c1(_ctx: &Ctx, identifier: Identifier, path: Uri) -> Source {
 #[derive(Debug, Clone)]
 pub struct Expression {
     pub identifier: Identifier,
-    pub paths: Path1,
+    pub paths: IteratorFileRelation1,
 }
-pub fn expression_c1(_ctx: &Ctx, identifier: Identifier, paths: Path1) -> Expression {
+pub fn expression_c1(
+    _ctx: &Ctx,
+    identifier: Identifier,
+    paths: IteratorFileRelation1,
+) -> Expression {
     Expression { identifier, paths }
 }
-pub type Path1 = Vec<Path>;
-pub fn path1_c1(_ctx: &Ctx, mut path1: Path1, path: Path) -> Path1 {
-    path1.push(path);
-    path1
+pub type IteratorFileRelation1 = Vec<IteratorFileRelation>;
+pub fn iterator_file_relation1_c1(
+    _ctx: &Ctx,
+    mut iterator_file_relation1: IteratorFileRelation1,
+    iterator_file_relation: IteratorFileRelation,
+) -> IteratorFileRelation1 {
+    iterator_file_relation1.push(iterator_file_relation);
+    iterator_file_relation1
 }
-pub fn path1_path(_ctx: &Ctx, path: Path) -> Path1 {
-    vec![path]
+pub fn iterator_file_relation1_iterator_file_relation(
+    _ctx: &Ctx,
+    iterator_file_relation: IteratorFileRelation,
+) -> IteratorFileRelation1 {
+    vec![iterator_file_relation]
 }
 #[derive(Debug, Clone)]
-pub struct Path {
+pub struct IteratorFileRelation {
     pub file: Identifier,
     pub iterator: Identifier,
 }
-pub fn path_c1(_ctx: &Ctx, file: Identifier, iterator: Identifier) -> Path {
-    Path { file, iterator }
+pub fn iterator_file_relation_c1(
+    _ctx: &Ctx,
+    file: Identifier,
+    iterator: Identifier,
+) -> IteratorFileRelation {
+    IteratorFileRelation {
+        file,
+        iterator,
+    }
 }
 #[derive(Debug, Clone)]
 pub struct Iterator {
