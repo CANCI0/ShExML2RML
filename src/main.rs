@@ -15,12 +15,12 @@ fn main() {
 
     println!("{:#?}", shexml);
 
-    // let mut visitor = TranspileVisitor::new();
-    // visitor.visit_shexml(&shexml);
-    //
-    // for node in &visitor.rml_code {
-    //     println!("{}", node);
-    // }
+    let mut visitor = TranspileVisitor::new();
+    visitor.visit_shexml(&shexml);
+
+    for node in &visitor.rml_code {
+        println!("{}", node);
+    }
 
     let duration = start.elapsed();
 
