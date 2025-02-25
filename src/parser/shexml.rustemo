@@ -22,6 +22,10 @@ Expression:
     "EXPRESSION" identifier=Identifier "<" paths=Path+[UnionLiteral] ">"
     ;
 
+Path:
+    file=Identifier '.' iterator=Identifier
+    ;
+
 Iterator:
     IteratorLiteral identifier=Identifier "<" path_type=PathLiteral path=Path ">"
     "{"
@@ -117,8 +121,8 @@ Identifier: /[a-zA-Z0-9\-_]*/;
 
 PathLiteral: /xpath:|jsonpath:/;
 
-Path: /[\/.@\$\[\]a-zA-Z0-9_\*\-'"]+/;
-
 ShapePath: /[\/.a-zA-Z0-9_\*\-]+/;
 
 Uri: /https?:\/\/[^\s<>"]+/;
+
+Dot: '.';
