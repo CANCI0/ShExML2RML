@@ -1,9 +1,9 @@
 use std::fmt;
 use std::fmt::Formatter;
+use crate::serializer::rml_classes::ReferenceFormulation;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use indoc::indoc;
 use once_cell::sync::Lazy;
-use crate::serializer::rml_classes::ReferenceFormulation;
 
 static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 

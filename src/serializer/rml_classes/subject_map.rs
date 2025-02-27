@@ -1,5 +1,10 @@
 use std::fmt;
 use std::fmt::Formatter;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use indoc::indoc;
+use once_cell::sync::Lazy;
+
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 
 #[derive(Debug, Clone)]
 pub struct SubjectMap {
@@ -8,10 +13,13 @@ pub struct SubjectMap {
 }
 
 impl SubjectMap {
-    pub fn new() -> SubjectMap {
-        SubjectMap {
-            id: String::from("s_2"),
-            template: String::from("http://example.com/{id}"),
+    pub(crate) fn new(template: String) -> SubjectMap {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
+        SubjectMap{
+            id,
+            template,
         }
     }
 }

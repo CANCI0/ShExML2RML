@@ -1,8 +1,9 @@
 use crate::parser::shexml_actions::*;
 use crate::serializer::visitor::abstract_visitor::Visitor;
-use crate::serializer::rml_classes::{RmlNode, NamespacePrefix, ReferenceFormulation};
+use crate::serializer::rml_classes::{RmlNode, NamespacePrefix, ReferenceFormulation, SubjectMap};
 use std::any::Any;
 use std::collections::HashMap;
+use std::iter::Iterator;
 use crate::parser::shexml_actions::Prefix;
 use crate::serializer::rml_classes::LogicalSource;
 
@@ -11,7 +12,8 @@ pub struct TranspileVisitor {
     pub prefixes: HashMap<String, Prefix>,
     pub sources: HashMap<String, Source>,
     pub iterators: HashMap<String, Iterator>,
-    pub iterators_for_expression: HashMap<String, Iterator>,
+    pub iterators_for_expression: HashMap<String, Vec<Iterator>>,
+    pub ids_for_logical_sources: HashMap<String, String>,
 }
 
 impl TranspileVisitor {
@@ -22,6 +24,7 @@ impl TranspileVisitor {
             sources: Default::default(),
             iterators: Default::default(),
             iterators_for_expression: Default::default(),
+            ids_for_logical_sources: Default::default(),
         };
 
         v.rml_code.push(RmlNode::NamespacePrefix {
@@ -88,14 +91,40 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
     fn visit_expression(&mut self, n: &Expression, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         for a in n.paths.iter() {
-            self.visit_iterator_file_relation(a, &Some(Box::new(String::from(&n.identifier)) as Box<dyn Any>));
+            let identifier_ref: &str = &n.identifier;
+            let iterator_any = self.visit_iterator_file_relation(a, &Some(Box::new(identifier_ref) as Box<dyn Any>));
+
+            if let Some(iterator_any) = iterator_any {
+                if let Ok(iterator) = iterator_any.downcast::<Vec<Iterator>>() {
+                    let v = self.iterators_for_expression.get_mut(&n.identifier).unwrap();
+                    v.push(*iterator);
+                } else {
+                    panic!("Error: No se pudo convertir a Vec<TipoIterador>");
+                }
+            }
         }
 
         None
     }
 
+
     fn visit_iterator(&mut self, n: &Iterator, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.iterators.insert(String::from(&n.identifier), n.clone());
+
+        None
+    }
+
+    fn visit_shape(&mut self, n: &Shape, obj: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+        let subject_identifier = &n.subject.subject_identifier;
+
+        let prefix = self.prefixes
+            .get(&String::from(&subject_identifier.prefix))
+            .expect(format!("Unexpected namespace: {}", &subject_identifier.prefix).as_str());
+
+        let x = subject_identifier.subject_generator.as_str().split(".").map(|s| s.to_string()).collect::<Vec<String>>();
+        let expression_ref = x.get(0).unwrap();
+
+        let subject_map = SubjectMap::new();
 
         None
     }
@@ -119,9 +148,10 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             String::from(&file.path),
         );
 
+        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), String::from(&logical_source.id));
+
         self.rml_code.push(RmlNode::LogicalSource(logical_source));
 
-        None
+        Option::from(Box::new(String::from(&n.iterator)))
     }
-
 }

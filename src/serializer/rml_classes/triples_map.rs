@@ -1,6 +1,11 @@
 use std::fmt;
 use std::fmt::Formatter;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, ReferenceFormulation, SubjectMap};
+use indoc::indoc;
+use once_cell::sync::Lazy;
+
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 
 #[derive(Debug, Clone)]
 pub struct TriplesMap {
@@ -11,16 +16,15 @@ pub struct TriplesMap {
 }
 
 impl TriplesMap {
-    pub fn new() -> TriplesMap {
-        TriplesMap{
-            id: String::from("m_2"),
-            logical_source: LogicalSource::new(
-                String::from("//film"),
-                ReferenceFormulation::XPath,
-                String::from("http://shexml.herminiogarcia.com/files/films.xml"),
-            ),
-            predicate_object_maps: vec![],
-            subject_map: SubjectMap::new(),
+    pub fn new(logical_source: LogicalSource, subject_map: SubjectMap, predicate_object_maps: Vec<PredicateObjectMap>) -> TriplesMap {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
+        TriplesMap {
+            id,
+            logical_source,
+            subject_map,
+            predicate_object_maps,
         }
     }
 }
