@@ -1,8 +1,9 @@
 use crate::parser::shexml_actions::*;
 use crate::serializer::visitor::abstract_visitor::Visitor;
-use crate::serializer::rml_classes::{RmlNode, NamespacePrefix, ReferenceFormulation, SubjectMap, LogicalSource, logical_source, TriplesMap};
+use crate::serializer::rml_classes::*;
 use std::any::Any;
 use std::collections::HashMap;
+use crate::serializer::rml_classes::PredicateObjectMap;
 use crate::parser::shexml_actions::{Prefix};
 
 pub struct TranspileVisitor {
@@ -87,19 +88,9 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         None
     }
 
-    fn visit_expression(&mut self, n: &Expression, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_expression(&mut self, n: &Expression, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         for a in n.paths.iter() {
-            let identifier_ref: &str = &n.identifier;
-            let iterator_any = self.visit_iterator_file_relation(a, &Some(Box::new(identifier_ref) as Box<dyn Any>));
-
-            if let Some(iterator_any) = iterator_any {
-                if let Ok(iterator) = iterator_any.downcast::<Vec<Iterator_>>() {
-                    let v = self.iterators_for_expression.get_mut(&n.identifier).unwrap();
-                    v.push(*iterator);
-                } else {
-                    panic!("Error: No se pudo convertir a Vec<TipoIterador>");
-                }
-            }
+            self.visit_iterator_file_relation(a, o);
         }
 
         None
@@ -112,12 +103,14 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         None
     }
 
-    fn visit_shape(&mut self, n: &Shape, obj: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let subject_identifier = &n.subject.subject_identifier;
-
-        let prefix = self.prefixes
-            .get(&String::from(&subject_identifier.prefix))
-            .expect(format!("Unexpected namespace: {}", &subject_identifier.prefix).as_str());
+        let mut prefix = None;
+        if let Some(_prefix) = &n.subject.subject_identifier.prefix {
+            prefix = Some(self.prefixes
+                .get(&String::from(_prefix))
+                .expect(format!("Unexpected namespace: {}", _prefix).as_str()));
+        }
 
         let path_sequence = subject_identifier.subject_generator.as_str().split(".").map(|s| s.to_string()).collect::<Vec<String>>();
 
@@ -136,16 +129,79 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                     panic!("Field with identifier '{}' not found for iterator '{}'", attribute_ref, iterator.identifier);
                 }
 
-                let triples_map = TriplesMap::new(
-                    LogicalSource(logical_source),
+                let mut triples_map = TriplesMap::new(
+                    logical_source.clone(),
                     subject_map,
                     vec![]
                 );
+
+                if let Some(predicate_objects) = &n.predicate_objects {
+                    for predicate_object in predicate_objects {
+                        let po_box = self.visit_predicate_object(predicate_object, &Some(Box::new(iterator) as Box<dyn Any>));
+
+                        if let Some(po_box) = po_box {
+                            if let Ok(po) = po_box.downcast::<PredicateObject>() {
+                                triples_map.predicate_object_maps.push(po.clone());
+                            } else {
+                                panic!("Expected PredicateObject but got a different type");
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
         None
     }
+
+    fn visit_predicate_object(&mut self, p: &PredicateObject, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+        if let Some(o) = o {
+            if let Some(iterator) = o.downcast_ref::<Iterator_>() {
+                let object;
+                match &p.object {
+                    Object::DataValue(data_value) => {
+                        let mut prefix = None;
+                        if let Some(prefix_) = &data_value.namespace {
+                            prefix = Some(self.prefixes
+                                .get(&String::from(prefix_))
+                                .expect(format!("Unexpected namespace: {}", prefix_).as_str()));
+                        }
+
+                        let path = data_value.shape_path.split(".").map(|s| s.to_string()).collect::<Vec<String>>();
+                        let field_id = path.get(1).unwrap();
+
+                        if let Some(_field) = iterator.fields.iter().find(|f| f.identifier == *field_id) {
+                            object = ObjectMap::new(
+                                Some(format!("{}{}", prefix.unwrap(), _field.path)),
+                                Some(TermType::IRI),
+                                None
+                            );
+                        } else {
+                            panic!("Field with identifier '{}' not found for iterator '{}'", field_id, iterator.identifier.as_str());
+                        }
+                    }
+                    //TODO: Implementar objetos referencia
+                    // Object::Reference(reference) => {
+                    //     println!("Reference: {:?}", reference);
+                    // }
+                    _ => {}
+                }
+
+                let predicate = PredicateMap::new(format!("{}{}",  p.predicate.namespace, p.predicate.identifier));
+                let predicate_object_map = PredicateObjectMap::new(
+                    object?,
+                    predicate,
+                );
+
+                Some(Box::new(predicate_object_map));
+            } else {
+                panic!("Expected a TriplesMap but got a different type");
+            }
+        }
+
+    }
+
 
     fn visit_iterator_file_relation(&mut self, n: &IteratorFileRelation, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let iterator = self.iterators
@@ -166,7 +222,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             String::from(&file.path),
         );
 
-        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), LogicalSource(logical_source));
+        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), logical_source);
 
         None
     }

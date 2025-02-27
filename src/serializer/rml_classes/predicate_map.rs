@@ -1,17 +1,24 @@
 use std::fmt;
 use std::fmt::Formatter;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use once_cell::sync::Lazy;
+
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 
 #[derive(Debug, Clone)]
 pub struct PredicateMap {
-    pub(crate) id: String,
-    constant: String,
+    pub id: String,
+    pub constant: String,
 }
 
 impl PredicateMap {
-    pub fn new() -> PredicateMap {
+    pub fn new(constant: String) -> PredicateMap {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
         PredicateMap {
-            id: String::from("p_3"),
-            constant: String::from(":year"),
+            id,
+            constant
         }
     }
 }

@@ -1,7 +1,6 @@
 use std::fmt;
 use std::fmt::Formatter;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use indoc::indoc;
 use once_cell::sync::Lazy;
 
 static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));

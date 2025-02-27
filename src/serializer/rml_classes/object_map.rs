@@ -1,5 +1,9 @@
 use std::fmt;
 use crate::serializer::rml_classes::{TermType, TriplesMap};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use once_cell::sync::Lazy;
+
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 
 #[derive(Debug, Clone)]
 pub struct ObjectMap {
@@ -10,12 +14,15 @@ pub struct ObjectMap {
 }
 
 impl ObjectMap {
-    pub fn new() -> ObjectMap {
+    pub fn new(template: Option<String>, term_type: Option<TermType>, parent_triples_map: Option<TriplesMap>) -> ObjectMap {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
         ObjectMap{
-            id: String::from("o_11"),
-            template: Some(String::from("http://dbpedia.org/resource/{year}")),
-            term_type: Some(TermType::IRI),
-            parent_triples_map: None,
+            id,
+            template,
+            term_type,
+            parent_triples_map
         }
     }
 }

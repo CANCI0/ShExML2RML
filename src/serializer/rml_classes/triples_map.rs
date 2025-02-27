@@ -1,8 +1,7 @@
 use std::fmt;
 use std::fmt::Formatter;
+use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, SubjectMap};
 use std::sync::atomic::{AtomicUsize, Ordering};
-use crate::serializer::rml_classes::{LogicalSource, PredicateObjectMap, ReferenceFormulation, SubjectMap};
-use indoc::indoc;
 use once_cell::sync::Lazy;
 
 static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));

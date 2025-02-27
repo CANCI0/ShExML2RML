@@ -1,6 +1,10 @@
 use std::fmt;
 use std::fmt::Formatter;
 use crate::serializer::rml_classes::{ObjectMap, PredicateMap};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use once_cell::sync::Lazy;
+
+static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 
 #[derive(Debug, Clone)]
 pub struct PredicateObjectMap {
@@ -10,11 +14,14 @@ pub struct PredicateObjectMap {
 }
 
 impl PredicateObjectMap {
-    pub fn new() -> Self {
-        Self{
-            id: String::from("po_4"),
-            object_map: ObjectMap::new(),
-            predicate_map: PredicateMap::new(),
+    pub fn new(object_map: ObjectMap, predicate_map: PredicateMap) -> Self {
+        let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let id = format!("s_{}", id_number);
+
+        PredicateObjectMap{
+            id,
+            object_map,
+            predicate_map,
         }
     }
 }
