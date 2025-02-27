@@ -49,7 +49,7 @@ where
         T::default()
     }
 
-    fn visit_iterator(&mut self, n: &Iterator, obj: &T) -> T {
+    fn visit_iterator(&mut self, n: &Iterator_, obj: &T) -> T {
         for field in &n.fields {
             self.visit_attribute(field, &obj);
         }

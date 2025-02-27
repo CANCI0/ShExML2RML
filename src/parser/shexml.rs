@@ -568,7 +568,7 @@ pub enum NonTerminal {
     Expression(shexml_actions::Expression),
     IteratorFileRelation1(shexml_actions::IteratorFileRelation1),
     IteratorFileRelation(shexml_actions::IteratorFileRelation),
-    Iterator(shexml_actions::Iterator),
+    Iterator(shexml_actions::Iterator_),
     Attribute1(shexml_actions::Attribute1),
     NestedIterator1(shexml_actions::NestedIterator1),
     NestedIterator0(shexml_actions::NestedIterator0),

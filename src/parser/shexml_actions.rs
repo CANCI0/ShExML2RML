@@ -84,16 +84,16 @@ pub fn source0_source1(_ctx: &Ctx, source1: Source1) -> Source0 {
 pub fn source0_empty(_ctx: &Ctx) -> Source0 {
     None
 }
-pub type Iterator1 = Vec<Iterator>;
+pub type Iterator1 = Vec<Iterator_>;
 pub fn iterator1_c1(
     _ctx: &Ctx,
     mut iterator1: Iterator1,
-    iterator: Iterator,
+    iterator: Iterator_,
 ) -> Iterator1 {
     iterator1.push(iterator);
     iterator1
 }
-pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator) -> Iterator1 {
+pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator_) -> Iterator1 {
     vec![iterator]
 }
 pub type Iterator0 = Option<Iterator1>;
@@ -196,7 +196,7 @@ pub fn iterator_file_relation_c1(
     }
 }
 #[derive(Debug, Clone)]
-pub struct Iterator {
+pub struct Iterator_ {
     pub identifier: Identifier,
     pub path_type: PathLiteral,
     pub path: Path,
@@ -210,8 +210,8 @@ pub fn iterator_c1(
     path: Path,
     fields: Attribute1,
     iterators: NestedIterator0,
-) -> Iterator {
-    Iterator {
+) -> Iterator_ {
+    Iterator_ {
         identifier,
         path_type,
         path,

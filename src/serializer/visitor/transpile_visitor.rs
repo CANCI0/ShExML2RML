@@ -1,19 +1,17 @@
 use crate::parser::shexml_actions::*;
 use crate::serializer::visitor::abstract_visitor::Visitor;
-use crate::serializer::rml_classes::{RmlNode, NamespacePrefix, ReferenceFormulation, SubjectMap};
+use crate::serializer::rml_classes::{RmlNode, NamespacePrefix, ReferenceFormulation, SubjectMap, LogicalSource, logical_source, TriplesMap};
 use std::any::Any;
 use std::collections::HashMap;
-use std::iter::Iterator;
-use crate::parser::shexml_actions::Prefix;
-use crate::serializer::rml_classes::LogicalSource;
+use crate::parser::shexml_actions::{Prefix};
 
 pub struct TranspileVisitor {
     pub rml_code: Vec<RmlNode>,
     pub prefixes: HashMap<String, Prefix>,
     pub sources: HashMap<String, Source>,
-    pub iterators: HashMap<String, Iterator>,
-    pub iterators_for_expression: HashMap<String, Vec<Iterator>>,
-    pub ids_for_logical_sources: HashMap<String, String>,
+    pub iterators: HashMap<String, Iterator_>,
+    pub iterators_for_expression: HashMap<String, Vec<Iterator_>>,
+    pub ids_for_logical_sources: HashMap<String, LogicalSource>,
 }
 
 impl TranspileVisitor {
@@ -95,7 +93,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             let iterator_any = self.visit_iterator_file_relation(a, &Some(Box::new(identifier_ref) as Box<dyn Any>));
 
             if let Some(iterator_any) = iterator_any {
-                if let Ok(iterator) = iterator_any.downcast::<Vec<Iterator>>() {
+                if let Ok(iterator) = iterator_any.downcast::<Vec<Iterator_>>() {
                     let v = self.iterators_for_expression.get_mut(&n.identifier).unwrap();
                     v.push(*iterator);
                 } else {
@@ -108,7 +106,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
     }
 
 
-    fn visit_iterator(&mut self, n: &Iterator, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_iterator(&mut self, n: &Iterator_, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.iterators.insert(String::from(&n.identifier), n.clone());
 
         None
@@ -121,10 +119,30 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             .get(&String::from(&subject_identifier.prefix))
             .expect(format!("Unexpected namespace: {}", &subject_identifier.prefix).as_str());
 
-        let x = subject_identifier.subject_generator.as_str().split(".").map(|s| s.to_string()).collect::<Vec<String>>();
-        let expression_ref = x.get(0).unwrap();
+        let path_sequence = subject_identifier.subject_generator.as_str().split(".").map(|s| s.to_string()).collect::<Vec<String>>();
 
-        let subject_map = SubjectMap::new();
+        let expression_ref = path_sequence.get(0).unwrap();
+        let attribute_ref = path_sequence.get(1).unwrap();
+
+        let iterators = self.iterators_for_expression.get(expression_ref);
+
+        if let Some(iterators) = iterators {
+            for iterator in iterators {
+                let logical_source = self.ids_for_logical_sources.get(iterator.identifier.as_str()).unwrap();
+                let subject_map;
+                if let Some(field) = iterator.fields.iter().find(|f| f.identifier == *attribute_ref) {
+                    subject_map = SubjectMap::new(format!("{}{}", prefix, field.path));
+                } else {
+                    panic!("Field with identifier '{}' not found for iterator '{}'", attribute_ref, iterator.identifier);
+                }
+
+                let triples_map = TriplesMap::new(
+                    LogicalSource(logical_source),
+                    subject_map,
+                    vec![]
+                );
+            }
+        }
 
         None
     }
@@ -148,10 +166,8 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             String::from(&file.path),
         );
 
-        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), String::from(&logical_source.id));
+        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), LogicalSource(logical_source));
 
-        self.rml_code.push(RmlNode::LogicalSource(logical_source));
-
-        Option::from(Box::new(String::from(&n.iterator)))
+        None
     }
 }
