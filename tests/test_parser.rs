@@ -2,9 +2,10 @@
 mod tests {
     use rust_shexml_interpreter::parser::shexml::ShexmlParser;
     use std::fs;
+    use std::iter::Iterator;
     use std::path::Path;
     use rustemo::Parser;
-    use rust_shexml_interpreter::parser::ast::*;
+    use rust_shexml_interpreter::parser::shexml_actions::{Prefix1, Source1};
 
     fn read_test_file(file_name: &str) -> String {
         let path = Path::new("resources").join(file_name);
@@ -21,27 +22,15 @@ mod tests {
         assert!(result.is_ok(), "The parser failed to parse valid input.");
 
         let ast = result.unwrap();
-        println!("Jarto: {:?}", ast.declarations);
 
-        // Verificar que hay exactamente 3 declaraciones de prefijo
-        let prefix_declarations: Vec<&Prefix> = ast
-            .declarations
-            .iter()
-            .filter_map(|decl| {
-                if let Declaration::Prefix(prefix) = decl {
-                    Some(prefix)
-                } else {
-                    None
-                }
-            })
-            .collect();
+        let prefix_declarations: Prefix1 = ast.prefixes.unwrap_or(vec![]);
 
         assert_eq!(prefix_declarations.len(), 3, "Expected 3 PREFIX declarations");
 
         let expected_prefixes = vec![
-            ("", "http://example.com/"),
-            ("dbr", "http://dbpedia.org/resource/"),
-            ("schema", "http://schema.org/"),
+            (":", "http://example.com/"),
+            ("dbr:", "http://dbpedia.org/resource/"),
+            ("schema:", "http://schema.org/"),
         ];
 
         for (i, (expected_id, expected_uri)) in expected_prefixes.iter().enumerate() {
@@ -70,6 +59,24 @@ mod tests {
         let result = parser.parse(&input);
 
         assert!(result.is_ok(), "The parser failed to parse valid input.");
+
+        let ast = result.unwrap();
+
+        let sources: Source1 = ast.sources.unwrap_or(vec![]);
+
+        assert_eq!(sources.len(), 3, "Expected 3 PREFIX declarations");
+
+        let expected_prefixes = vec![
+            ("json_file", "file:///example/path/to/file/file.json"),
+            ("json_relative_path", "file.json"),
+            ("xml_file", "https://example.com/file.xml"),
+        ];
+
+        for (i, (expected_id, expected_uri)) in expected_prefixes.iter().enumerate() {
+            let source = sources.get(i).unwrap();
+            assert_eq!(&source.identifier, expected_id, "Mismatch in source identifier");
+            assert_eq!(&source.path, expected_uri, "Mismatch in source path");
+        }
     }
 
     #[test]

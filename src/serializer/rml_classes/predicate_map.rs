@@ -30,6 +30,6 @@ impl fmt::Display for PredicateMap {
         result.push_str(&format!("map:{}  a           rr:predicateMap ;\n", self.id));
         result.push_str(&format!("        rr:constant  {} .", self.constant));
 
-        writeln!(f, "{}", result)
+        write!(f, "{}", result)
     }
 }

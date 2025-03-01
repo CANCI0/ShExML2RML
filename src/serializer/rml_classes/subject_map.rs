@@ -12,7 +12,7 @@ pub struct SubjectMap {
 }
 
 impl SubjectMap {
-    pub(crate) fn new(template: String) -> SubjectMap {
+    pub fn new(template: String) -> SubjectMap {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
         let id = format!("s_{}", id_number);
 

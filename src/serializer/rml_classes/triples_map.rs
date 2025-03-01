@@ -30,8 +30,6 @@ impl TriplesMap {
 
 impl fmt::Display for TriplesMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let mut result = String::new();
-
         let maps = self.predicate_object_maps.iter()
             .map(|po| format!("map:{} ", po.id))
             .collect::<Vec<_>>()
@@ -46,9 +44,9 @@ impl fmt::Display for TriplesMap {
         writeln!(f, "{}", self.logical_source)?;
         writeln!(f, "{}", self.subject_map)?;
         for map in &self.predicate_object_maps {
-            writeln!(f, "{}", map)?;
+            write!(f, "{}", map)?;
         }
 
-        writeln!(f, "{}", result)
+        write!(f, "")
     }
 }

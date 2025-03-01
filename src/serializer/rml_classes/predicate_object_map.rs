@@ -9,8 +9,8 @@ static COUNTER: Lazy<AtomicUsize> = Lazy::new(|| AtomicUsize::new(1));
 #[derive(Debug, Clone)]
 pub struct PredicateObjectMap {
     pub id: String,
-    object_map: ObjectMap,
-    predicate_map: PredicateMap,
+    pub object_map: ObjectMap,
+    pub predicate_map: PredicateMap,
 }
 
 impl PredicateObjectMap {
