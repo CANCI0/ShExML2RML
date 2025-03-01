@@ -3,8 +3,6 @@ use crate::serializer::visitor::abstract_visitor::Visitor;
 use crate::serializer::rml_classes::*;
 use std::any::Any;
 use std::collections::HashMap;
-use crate::serializer::rml_classes::PredicateObjectMap;
-use crate::parser::shexml_actions::{Prefix};
 
 pub struct TranspileVisitor {
     pub rml_code: Vec<RmlNode>,
@@ -16,214 +14,120 @@ pub struct TranspileVisitor {
 }
 
 impl TranspileVisitor {
-    pub fn new() -> TranspileVisitor {
-        let mut v = TranspileVisitor {
+    pub fn new() -> Self {
+        let mut v = Self {
             rml_code: vec![],
-            prefixes: Default::default(),
-            sources: Default::default(),
-            iterators: Default::default(),
-            iterators_for_expression: Default::default(),
-            ids_for_logical_sources: Default::default(),
+            prefixes: HashMap::new(),
+            sources: HashMap::new(),
+            iterators: HashMap::new(),
+            iterators_for_expression: HashMap::new(),
+            ids_for_logical_sources: HashMap::new(),
         };
 
-        v.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: String::from("rml:"),
-                uri: String::from("http://semweb.mmlab.be/ns/rml#"),
-            },
-        });
+        let namespaces = vec![
+            ("rml:", "http://semweb.mmlab.be/ns/rml#"),
+            ("rr:", "http://www.w3.org/ns/r2rml#"),
+            ("d2rq:", "http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#"),
+            ("ql:", "http://semweb.mmlab.be/ns/ql#"),
+            ("map:", "http://mapping.example.com/"),
+        ];
 
-        v.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: String::from("rr:"),
-                uri: String::from("http://www.w3.org/ns/r2rml#"),
-            },
-        });
-
-        v.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: String::from("d2rq:"),
-                uri: String::from("http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#"),
-            },
-        });
-
-        v.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: String::from("ql:"),
-                uri: String::from("http://semweb.mmlab.be/ns/ql#"),
-            },
-        });
-
-        v.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: String::from("map:"),
-                uri: String::from("http://mapping.example.com/"),
-            },
-        });
-
+        for (id, uri) in namespaces {
+            v.rml_code.push(RmlNode::NamespacePrefix {
+                0: NamespacePrefix {
+                    identifier: id.to_string(),
+                    uri: uri.to_string(),
+                },
+            });
+        }
         v
     }
 }
 
 impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
-    
     fn visit_prefix(&mut self, n: &Prefix, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        let prefix = RmlNode::NamespacePrefix {
+        self.prefixes.insert(n.identifier.clone(), n.clone());
+        self.rml_code.push(RmlNode::NamespacePrefix {
             0: NamespacePrefix {
-                identifier: String::from(&n.identifier),
-                uri: String::from(&n.uri),
+                identifier: n.identifier.clone(),
+                uri: n.uri.clone(),
             },
-        };
-
-        self.prefixes.insert(String::from(&n.identifier), n.clone());
-
-        self.rml_code.push(prefix);
-
+        });
         None
     }
 
     fn visit_source(&mut self, n: &Source, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        self.sources.insert(String::from(&n.identifier), n.clone());
-
+        self.sources.insert(n.identifier.clone(), n.clone());
         None
     }
-
-    fn visit_expression(&mut self, n: &Expression, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        for a in n.paths.iter() {
-            self.visit_iterator_file_relation(a, o);
-        }
-
-        None
-    }
-
 
     fn visit_iterator(&mut self, n: &Iterator_, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        self.iterators.insert(String::from(&n.identifier), n.clone());
-
+        self.iterators.insert(n.identifier.clone(), n.clone());
         None
     }
 
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        let subject_identifier = &n.subject.subject_identifier;
-        let mut prefix = None;
-        if let Some(_prefix) = &n.subject.subject_identifier.prefix {
-            prefix = Some(self.prefixes
-                .get(&String::from(_prefix))
-                .expect(format!("Unexpected namespace: {}", _prefix).as_str()));
-        }
+        let iterators = match self.iterators_for_expression.get(&n.subject.subject_identifier.subject_generator) {
+            Some(it) => it.clone(),
+            None => return None,
+        };
 
-        let path_sequence = subject_identifier.subject_generator.as_str().split(".").map(|s| s.to_string()).collect::<Vec<String>>();
 
-        let expression_ref = path_sequence.get(0).unwrap();
-        let attribute_ref = path_sequence.get(1).unwrap();
-
-        let iterators = self.iterators_for_expression.get(expression_ref);
-
-        if let Some(iterators) = iterators {
-            for iterator in iterators {
-                let logical_source = self.ids_for_logical_sources.get(iterator.identifier.as_str()).unwrap();
-                let subject_map;
-                if let Some(field) = iterator.fields.iter().find(|f| f.identifier == *attribute_ref) {
-                    subject_map = SubjectMap::new(format!("{}{}", prefix, field.path));
-                } else {
-                    panic!("Field with identifier '{}' not found for iterator '{}'", attribute_ref, iterator.identifier);
-                }
-
-                let mut triples_map = TriplesMap::new(
-                    logical_source.clone(),
-                    subject_map,
-                    vec![]
-                );
+        for iterator in iterators {
+            if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
+                let prefix = n.subject.subject_identifier.prefix.as_deref().unwrap_or("");
+                let subject_map = SubjectMap::new(format!("{prefix}{}", iterator.identifier));
+                let mut triples_map = TriplesMap::new(logical_source.clone(), subject_map, vec![]);
 
                 if let Some(predicate_objects) = &n.predicate_objects {
                     for predicate_object in predicate_objects {
-                        let po_box = self.visit_predicate_object(predicate_object, &Some(Box::new(iterator) as Box<dyn Any>));
-
-                        if let Some(po_box) = po_box {
-                            if let Ok(po) = po_box.downcast::<PredicateObject>() {
-                                triples_map.predicate_object_maps.push(po.clone());
-                            } else {
-                                panic!("Expected PredicateObject but got a different type");
+                        if let Some(po_box) = self.visit_predicate_object(predicate_object, &Some(Box::new(iterator.clone()) as Box<dyn Any>)) {
+                            if let Ok(po) = po_box.downcast::<PredicateObjectMap>() {
+                                triples_map.predicate_object_maps.push(*po);
                             }
                         }
                     }
                 }
-
+                self.rml_code.push(RmlNode::TriplesMap(triples_map));
             }
         }
-
         None
     }
 
+
     fn visit_predicate_object(&mut self, p: &PredicateObject, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        if let Some(o) = o {
-            if let Some(iterator) = o.downcast_ref::<Iterator_>() {
-                let object;
-                match &p.object {
-                    Object::DataValue(data_value) => {
-                        let mut prefix = None;
-                        if let Some(prefix_) = &data_value.namespace {
-                            prefix = Some(self.prefixes
-                                .get(&String::from(prefix_))
-                                .expect(format!("Unexpected namespace: {}", prefix_).as_str()));
-                        }
+        let Some(iterator) = o.as_ref().and_then(|o| o.downcast_ref::<Iterator_>()) else {
+            return None;
+        };
 
-                        let path = data_value.shape_path.split(".").map(|s| s.to_string()).collect::<Vec<String>>();
-                        let field_id = path.get(1).unwrap();
+        let object = if let Object::DataValue(data_value) = &p.object {
+            let prefix_uri = data_value.namespace.as_ref().and_then(|prefix| self.prefixes.get(prefix)).map(|p| &p.uri).map_or("", |v| v);
+            let path = data_value.shape_path.split('.').nth(1).unwrap_or("");
+            let field = iterator.fields.iter().find(|f| f.identifier == path)?;
+            ObjectMap::new(Some(format!("{}{}", prefix_uri, field.path)), Some(TermType::IRI), None)
+        } else {
+            return None;
+        };
 
-                        if let Some(_field) = iterator.fields.iter().find(|f| f.identifier == *field_id) {
-                            object = ObjectMap::new(
-                                Some(format!("{}{}", prefix.unwrap(), _field.path)),
-                                Some(TermType::IRI),
-                                None
-                            );
-                        } else {
-                            panic!("Field with identifier '{}' not found for iterator '{}'", field_id, iterator.identifier.as_str());
-                        }
-                    }
-                    //TODO: Implementar objetos referencia
-                    // Object::Reference(reference) => {
-                    //     println!("Reference: {:?}", reference);
-                    // }
-                    _ => {}
-                }
-
-                let predicate = PredicateMap::new(format!("{}{}",  p.predicate.namespace, p.predicate.identifier));
-                let predicate_object_map = PredicateObjectMap::new(
-                    object?,
-                    predicate,
-                );
-
-                Some(Box::new(predicate_object_map));
-            } else {
-                panic!("Expected a TriplesMap but got a different type");
-            }
-        }
-
+        let predicate = PredicateMap::new(format!("{}{}", p.predicate.namespace, p.predicate.identifier));
+        Some(Box::new(PredicateObjectMap::new(object, predicate)))
     }
 
-
     fn visit_iterator_file_relation(&mut self, n: &IteratorFileRelation, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        let iterator = self.iterators
-            .get(&n.iterator)
-            .expect(&format!("Iterator '{}' not found", n.iterator));
-
-        let file = self.sources
-            .get(&n.file)
-            .expect(&format!("File '{}' not found", n.file));
+        let iterator = self.iterators.get(&n.iterator)?;
+        let file = self.sources.get(&n.file)?;
 
         let logical_source = LogicalSource::new(
-            String::from(&iterator.path),
+            iterator.path.clone(),
             match iterator.path_type.as_str() {
                 "xpath:" => ReferenceFormulation::XPath,
                 "jsonpath:" => ReferenceFormulation::JSONPath,
-                _ => panic!("Unknown path type: {}", iterator.path_type),
+                _ => return None,
             },
-            String::from(&file.path),
+            file.path.clone(),
         );
 
-        self.ids_for_logical_sources.insert(String::from(&iterator.identifier), logical_source);
-
+        self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source);
         None
     }
 }
