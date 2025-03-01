@@ -9,11 +9,9 @@ fn main() {
     let start = Instant::now();
 
     let parser = ShexmlParser::new();
-    let input = read_test_file("test.shexml");
+    let input = read_test_file("single_iterator_single_expression.shexml");
 
     let shexml = parser.parse(&input).unwrap();
-
-    println!("{:#?}", shexml);
 
     let mut visitor = TranspileVisitor::new();
     visitor.visit_shexml(&shexml, &None);

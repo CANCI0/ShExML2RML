@@ -109,8 +109,6 @@ mod unit_tests {
 
         let result = parser.parse(&input);
 
-        println!("{:#?}", result);
-
         assert!(result.is_ok(), "The parser failed to parse valid input.");
 
         let ast = result.unwrap();
@@ -355,8 +353,6 @@ mod unit_tests {
         let input = read_test_file("valid_shapes.shexml");
 
         let result = parser.parse(&input);
-
-        println!("{:#?}", result);
 
         assert!(result.is_ok(), "The parser failed to parse valid input.");
 

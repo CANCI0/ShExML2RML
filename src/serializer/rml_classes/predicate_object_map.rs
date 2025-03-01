@@ -30,12 +30,11 @@ impl fmt::Display for PredicateObjectMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "map:{}  a              rr:PredicateObjectMap ;", self.id)?;
         writeln!(f, "        rr:objectMap     map:{} ;", self.object_map.id)?;
-        writeln!(f, "        rr:predicateMap  map:{} ;", self.predicate_map.id)?;
+        writeln!(f, "        rr:predicateMap  map:{} .", self.predicate_map.id)?;
         writeln!(f, "")?;
         writeln!(f, "{}", self.object_map)?;
         writeln!(f, "{}", self.predicate_map)?;
-
-        Ok(())
+        writeln!(f, "")
     }
 }
 

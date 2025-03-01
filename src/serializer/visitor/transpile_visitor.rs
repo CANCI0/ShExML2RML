@@ -47,6 +47,7 @@ impl TranspileVisitor {
 }
 
 impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
+
     fn visit_prefix(&mut self, n: &Prefix, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.prefixes.insert(n.identifier.clone(), n.clone());
         self.rml_code.push(RmlNode::NamespacePrefix {
@@ -81,6 +82,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let subject_generator = &n.subject.subject_identifier.subject_generator.as_str();
         let path = subject_generator.split('.').nth(0).unwrap_or("");
+        let attr = subject_generator.split('.').nth(1).unwrap_or("");
 
         let iterators = match self.iterators_for_expression.get(path) {
             Some(it) => it.clone(),
@@ -90,7 +92,11 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
                 let prefix = n.subject.subject_identifier.prefix.as_deref().unwrap_or("");
-                let subject_map = SubjectMap::new(format!("{prefix}{}", iterator.identifier));
+                let prefix_uri = self.prefixes.get(prefix).map(|p| &p.uri).map_or("", |v| v);
+
+                let field = iterator.fields.iter().find(|f| f.identifier == attr)?;
+
+                let subject_map = SubjectMap::new(format!("{}{{{}}}", prefix_uri, field.path));
                 let mut triples_map = TriplesMap::new(logical_source.clone(), subject_map, vec![]);
 
                 if let Some(predicate_objects) = &n.predicate_objects {
@@ -102,7 +108,6 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                         }
                     }
                 }
-                println!("Triples map: {:#?}", triples_map);
                 self.rml_code.push(RmlNode::TriplesMap(triples_map));
             }
         }
@@ -118,8 +123,17 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         let object = if let Object::DataValue(data_value) = &p.object {
             let prefix_uri = data_value.namespace.as_ref().and_then(|prefix| self.prefixes.get(prefix)).map(|p| &p.uri).map_or("", |v| v);
             let path = data_value.shape_path.split('.').nth(1).unwrap_or("");
+            let term_type = match prefix_uri{
+                "" => TermType::Literal,
+                _ => TermType::IRI
+            };
             let field = iterator.fields.iter().find(|f| f.identifier == path)?;
-            ObjectMap::new(Some(format!("{}{}", prefix_uri, field.path)), Some(TermType::IRI), None)
+            ObjectMap::new(
+                Some(format!("{}{{{}}}", prefix_uri, field.path)),
+                Some(term_type),
+                None
+            )
+
         } else {
             return None;
         };
