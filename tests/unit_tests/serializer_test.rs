@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+mod unit_tests {
     use indoc::indoc;
     use rust_shexml_interpreter::serializer::rml_classes::{
         LogicalSource, ObjectMap, PredicateMap, PredicateObjectMap, ReferenceFormulation,
@@ -47,8 +47,7 @@ mod tests {
 
         let expected_output = indoc! {"
             map:p_1  a           rr:predicateMap ;
-                    rr:constant  :year .
-        "};
+                    rr:constant  :year ."};
 
         assert_eq!(format!("{}", input), expected_output);
     }
@@ -66,8 +65,14 @@ mod tests {
 
         let expected_output = indoc! {"
             map:po_1  a              rr:PredicateObjectMap ;
-                    rr:objectMap     map:o_1 ;
-                    rr:predicateMap  map:p_1 .
+                    rr:objectMap     map:o_2 ;
+                    rr:predicateMap  map:p_2 ;
+
+            map:o_2  a          rr:ObjectMap ;
+                    rr:template  \"http://dbpedia.org/resource/{year}\" .
+
+            map:p_2  a           rr:predicateMap ;
+                    rr:constant  schema:name .
         "};
 
         assert_eq!(format!("{}", input), expected_output);

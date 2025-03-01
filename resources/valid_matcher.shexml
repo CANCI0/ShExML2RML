@@ -1,2 +1,0 @@
-MATCHER ast <"Principality of Asturias", "Principado de Asturias", "Asturies" AS Asturias>
-MATCHER regions <"Principality of Asturias", "Principáu d'Asturies", "Asturies" AS Asturias & "Spain", "España", "Espagne" AS Spain>
