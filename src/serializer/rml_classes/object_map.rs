@@ -16,7 +16,7 @@ pub struct ObjectMap {
 impl ObjectMap {
     pub fn new(template: Option<String>, term_type: Option<TermType>, parent_triples_map: Option<TriplesMap>) -> ObjectMap {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let id = format!("s_{}", id_number);
+        let id = format!("o_{}", id_number);
 
         ObjectMap{
             id,

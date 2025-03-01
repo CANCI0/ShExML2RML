@@ -18,7 +18,7 @@ pub struct LogicalSource {
 impl LogicalSource {
     pub fn new(iterator: String, reference_formulation: ReferenceFormulation, source: String) -> Self {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let id = format!("s_{}", id_number);
+        let id = format!("ls_{}", id_number);
 
         LogicalSource {
             id,

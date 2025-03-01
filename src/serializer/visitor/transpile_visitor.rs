@@ -10,6 +10,7 @@ pub struct TranspileVisitor {
     pub sources: HashMap<String, Source>,
     pub iterators: HashMap<String, Iterator_>,
     pub iterators_for_expression: HashMap<String, Vec<Iterator_>>,
+    pub sources_for_iterator: HashMap<String, Vec<Source>>,
     pub ids_for_logical_sources: HashMap<String, LogicalSource>,
 }
 
@@ -21,6 +22,7 @@ impl TranspileVisitor {
             sources: HashMap::new(),
             iterators: HashMap::new(),
             iterators_for_expression: HashMap::new(),
+            sources_for_iterator: Default::default(),
             ids_for_logical_sources: HashMap::new(),
         };
 
@@ -61,17 +63,29 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         None
     }
 
+    fn visit_expression(&mut self, n: &Expression, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+        let identifier = Some(Box::new(n.identifier.clone()) as Box<dyn Any>);
+
+        for a in &n.paths {
+            self.visit_iterator_file_relation(a, &identifier);
+        }
+
+        None
+    }
+
     fn visit_iterator(&mut self, n: &Iterator_, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.iterators.insert(n.identifier.clone(), n.clone());
         None
     }
 
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
-        let iterators = match self.iterators_for_expression.get(&n.subject.subject_identifier.subject_generator) {
+        let subject_generator = &n.subject.subject_identifier.subject_generator.as_str();
+        let path = subject_generator.split('.').nth(0).unwrap_or("");
+
+        let iterators = match self.iterators_for_expression.get(path) {
             Some(it) => it.clone(),
             None => return None,
         };
-
 
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
@@ -88,6 +102,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                         }
                     }
                 }
+                println!("Triples map: {:#?}", triples_map);
                 self.rml_code.push(RmlNode::TriplesMap(triples_map));
             }
         }
@@ -113,7 +128,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         Some(Box::new(PredicateObjectMap::new(object, predicate)))
     }
 
-    fn visit_iterator_file_relation(&mut self, n: &IteratorFileRelation, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_iterator_file_relation(&mut self, n: &IteratorFileRelation, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let iterator = self.iterators.get(&n.iterator)?;
         let file = self.sources.get(&n.file)?;
 
@@ -128,6 +143,15 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         );
 
         self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source);
+
+        if let Some(identifier) = o.as_ref().and_then(|b| b.downcast_ref::<String>()) {
+            self.iterators_for_expression
+                .entry(identifier.clone())
+                .or_insert_with(Vec::new)
+                .push(iterator.clone());
+        }
+
         None
     }
+
 }

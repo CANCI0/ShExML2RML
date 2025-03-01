@@ -17,7 +17,7 @@ pub struct TriplesMap {
 impl TriplesMap {
     pub fn new(logical_source: LogicalSource, subject_map: SubjectMap, predicate_object_maps: Vec<PredicateObjectMap>) -> TriplesMap {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let id = format!("s_{}", id_number);
+        let id = format!("m_{}", id_number);
 
         TriplesMap {
             id,
@@ -37,10 +37,17 @@ impl fmt::Display for TriplesMap {
             .collect::<Vec<_>>()
             .join(", ");
 
-        result.push_str(&format!("map:{}  a                     rr:TriplesMap ;\n", self.id));
-        result.push_str(&format!("        rml:logicalSource      map:{} ;\n", self.logical_source.id));
-        result.push_str(&format!("        rr:predicateObjectMap  {};\n", maps));
-        result.push_str(&format!("        rr:subjectMap          map:{} .", self.subject_map.id));
+        writeln!(f, "")?;
+        writeln!(f, "map:{}  a rr:TriplesMap ;", self.id)?;
+        writeln!(f, "    rml:logicalSource      map:{} ;", self.logical_source.id)?;
+        writeln!(f, "    rr:predicateObjectMap  {};", maps)?;
+        writeln!(f, "    rr:subjectMap          map:{} .", self.subject_map.id)?;
+        writeln!(f, "")?;
+        writeln!(f, "{}", self.logical_source)?;
+        writeln!(f, "{}", self.subject_map)?;
+        for map in &self.predicate_object_maps {
+            writeln!(f, "{}", map)?;
+        }
 
         writeln!(f, "{}", result)
     }

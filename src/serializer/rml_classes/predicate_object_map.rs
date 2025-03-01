@@ -16,7 +16,7 @@ pub struct PredicateObjectMap {
 impl PredicateObjectMap {
     pub fn new(object_map: ObjectMap, predicate_map: PredicateMap) -> Self {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let id = format!("s_{}", id_number);
+        let id = format!("po_{}", id_number);
 
         PredicateObjectMap{
             id,
@@ -28,12 +28,14 @@ impl PredicateObjectMap {
 
 impl fmt::Display for PredicateObjectMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let mut result = String::new();
+        writeln!(f, "map:{}  a              rr:PredicateObjectMap ;", self.id)?;
+        writeln!(f, "        rr:objectMap     map:{} ;", self.object_map.id)?;
+        writeln!(f, "        rr:predicateMap  map:{} ;", self.predicate_map.id)?;
+        writeln!(f, "")?;
+        writeln!(f, "{}", self.object_map)?;
+        writeln!(f, "{}", self.predicate_map)?;
 
-        result.push_str(&format!("map:{}  a              rr:PredicateObjectMap ;\n", self.id));
-        result.push_str(&format!("        rr:objectMap     map:{} ;\n", self.object_map.id));
-        result.push_str(&format!("        rr:predicateMap  map:{} .", self.predicate_map.id));
-
-        writeln!(f, "{}", result)
+        Ok(())
     }
 }
+

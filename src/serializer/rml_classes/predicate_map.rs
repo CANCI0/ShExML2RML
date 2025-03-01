@@ -14,7 +14,7 @@ pub struct PredicateMap {
 impl PredicateMap {
     pub fn new(constant: String) -> PredicateMap {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let id = format!("s_{}", id_number);
+        let id = format!("p_{}", id_number);
 
         PredicateMap {
             id,
