@@ -4,8 +4,8 @@ mod integration_test {
     use std::fs;
     use std::path::Path;
     use rustemo::Parser;
-    use rust_shexml_interpreter::parser::shexml::ShexmlParser;
-    use rust_shexml_interpreter::serializer::visitor::{TranspileVisitor, Visitor};
+    use shexml2rml::parser::shexml::ShexmlParser;
+    use shexml2rml::serializer::visitor::{TranspileVisitor, Visitor};
 
     fn read_test_file(file_name: &str) -> String {
         let path = Path::new("./resources/integration/").join(file_name);
@@ -16,7 +16,7 @@ mod integration_test {
     fn test_iterators_single_expression() {
         let parser = ShexmlParser::new();
         let input = read_test_file("single_iterator_single_expression.shexml");
-        let expected = fs::read_to_string("./outputs/single_iterator_single_expression.shexml")
+        let expected = fs::read_to_string("./outputs/single_iterator_single_expression.ttl")
             .expect("Failed to read path")
             .replace("\r", "");
 

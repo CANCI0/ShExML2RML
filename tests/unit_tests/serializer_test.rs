@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod unit_tests {
     use indoc::indoc;
-    use rust_shexml_interpreter::serializer::rml_classes::{
+    use shexml2rml::serializer::rml_classes::{
         LogicalSource, ObjectMap, PredicateMap, PredicateObjectMap, ReferenceFormulation,
         SubjectMap, TermType, TriplesMap,
     };
