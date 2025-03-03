@@ -66,7 +66,7 @@ mod unit_tests {
         let expected_output = indoc! {"
             map:po_1  a              rr:PredicateObjectMap ;
                     rr:objectMap     map:o_2 ;
-                    rr:predicateMap  map:p_2 ;
+                    rr:predicateMap  map:p_2 .
 
             map:o_2  a          rr:ObjectMap ;
                     rr:template  \"http://dbpedia.org/resource/{year}\" .
@@ -179,7 +179,7 @@ mod unit_tests {
 
             map:po_1  a              rr:PredicateObjectMap ;
                     rr:objectMap     map:o_1 ;
-                    rr:predicateMap  map:p_1 ;
+                    rr:predicateMap  map:p_1 .
 
             map:o_1  a          rr:ObjectMap ;
                     rr:template  \"name\" ;

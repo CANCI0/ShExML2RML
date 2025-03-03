@@ -33,8 +33,7 @@ impl fmt::Display for PredicateObjectMap {
         writeln!(f, "        rr:predicateMap  map:{} .", self.predicate_map.id)?;
         writeln!(f, "")?;
         writeln!(f, "{}", self.object_map)?;
-        writeln!(f, "{}", self.predicate_map)?;
-        writeln!(f, "")
+        writeln!(f, "{}", self.predicate_map)
     }
 }
 
