@@ -1,0 +1,14 @@
+PREFIX : <http://example.com/>
+PREFIX schema: <http://schema.org/>
+SOURCE films_xml_file <http://shexml.herminiogarcia.com/files/films.xml>
+
+ITERATOR film_xml <xpath: //film> {
+    FIELD id <@id>
+    FIELD name <name>
+}
+
+EXPRESSION films <films_xml_file.film_xml>
+
+:Film :[films.id] {
+    schema:name [films.name] ;
+}

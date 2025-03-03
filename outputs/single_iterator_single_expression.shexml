@@ -1,0 +1,31 @@
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix map: <http://mapping.example.com/> .
+@prefix : <http://example.com/> .
+@prefix schema: <http://schema.org/> .
+
+map:m_1  a rr:TriplesMap ;
+    rml:logicalSource      map:ls_1 ;
+    rr:predicateObjectMap  map:po_1 ;
+    rr:subjectMap          map:s_1 .
+
+map:ls_1  a                rml:LogicalSource ;
+        rml:iterator              "//film" ;
+        rml:referenceFormulation  ql:XPath ;
+        rml:source                "http://shexml.herminiogarcia.com/files/films.xml" .
+
+map:s_1  a           rr:SubjectMap ;
+        rr:template  "http://example.com/{@id}" .
+
+map:po_1  a              rr:PredicateObjectMap ;
+        rr:objectMap     map:o_1 ;
+        rr:predicateMap  map:p_1 .
+
+map:o_1  a          rr:ObjectMap ;
+        rr:template  "{name}" ;
+        rr:termType  rr:Literal .
+
+map:p_1  a           rr:predicateMap ;
+        rr:constant  schema:name .

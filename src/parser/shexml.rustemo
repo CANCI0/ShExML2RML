@@ -1,13 +1,9 @@
 Shexml:
-    declarations=Declaration*
+    prefixes=Prefix*
+    sources=Source*
+    iterators=Iterator*
+    expressions=Expression*
     shapes=Shape*
-    ;
-
-Declaration:
-    Prefix
-    | Source
-    | Expression
-    | Iterator
     ;
 
 Prefix:
@@ -19,22 +15,26 @@ Source:
     ;
 
 Expression:
-    "EXPRESSION" identifier=Identifier "<" paths=Path+[UnionLiteral] ">"
+    "EXPRESSION" identifier=Identifier "<" paths=IteratorFileRelation+[UnionLiteral] ">"
+    ;
+
+IteratorFileRelation:
+    file=Identifier '.' iterator=Identifier
     ;
 
 Iterator:
     IteratorLiteral identifier=Identifier "<" path_type=PathLiteral path=Path ">"
     "{"
         fields=Attribute+
-        iterators=Nestedterator*
+        iterators=NestedIterator*
     "}"
     ;
 
-Nestedterator:
+NestedIterator:
     IteratorLiteral identifier=Identifier "<" path=Path ">"
     "{"
         fields=Attribute+
-        iterators=Iterator*
+        iterators=NestedIterator*
     "}"
     ;
 
@@ -122,3 +122,5 @@ Path: /[\/.@\$\[\]a-zA-Z0-9_\*\-'"]+/;
 ShapePath: /[\/.a-zA-Z0-9_\*\-]+/;
 
 Uri: /https?:\/\/[^\s<>"]+/;
+
+Dot: '.';
