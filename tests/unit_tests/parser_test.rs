@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod unit_tests {
-    use rust_shexml_interpreter::parser::shexml::ShexmlParser;
-    use rust_shexml_interpreter::parser::shexml_actions::Object::{DataValue, Reference};
-    use rust_shexml_interpreter::parser::shexml_actions::{
+    use shexml2rml::parser::shexml::ShexmlParser;
+    use shexml2rml::parser::shexml_actions::Object::{DataValue, Reference};
+    use shexml2rml::parser::shexml_actions::{
         Attribute, Attribute1, Class, DataValue as OtherDataValue, Expression, Iterator1,
         IteratorFileRelation, Iterator_, NestedIterator, Predicate, PredicateObject, Prefix1,
         Reference as OtherReference, Shape, Shape1, Source1, Subject, SubjectIdentifier,
