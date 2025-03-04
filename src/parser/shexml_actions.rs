@@ -195,7 +195,7 @@ pub fn iterator_file_relation_c1(
         iterator,
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Iterator {
     pub identifier: Identifier,
     pub path_type: PathLiteralOpt,
@@ -241,7 +241,7 @@ pub fn attribute1_c1(
 pub fn attribute1_attribute(_ctx: &Ctx, attribute: Attribute) -> Attribute1 {
     vec![attribute]
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Attribute {
     pub identifier: Identifier,
     pub path: Path,
@@ -249,7 +249,7 @@ pub struct Attribute {
 pub fn attribute_c1(_ctx: &Ctx, identifier: Identifier, path: Path) -> Attribute {
     Attribute { identifier, path }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Shape {
     pub subject: Subject,
     pub predicate_objects: PredicateObject0,
@@ -289,7 +289,7 @@ pub fn predicate_object0_predicate_object1(
 pub fn predicate_object0_empty(_ctx: &Ctx) -> PredicateObject0 {
     None
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Subject {
     pub class: Class,
     pub subject_identifier: SubjectIdentifier,
@@ -304,7 +304,7 @@ pub fn subject_c1(
         subject_identifier,
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Class {
     pub namespace: Namespace,
     pub identifier: Identifier,
@@ -312,7 +312,7 @@ pub struct Class {
 pub fn class_c1(_ctx: &Ctx, namespace: Namespace, identifier: Identifier) -> Class {
     Class { namespace, identifier }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SubjectIdentifier {
     pub prefix: NamespaceOpt,
     pub subject_generator: ShapePath,
@@ -334,7 +334,7 @@ pub fn namespace_opt_namespace(_ctx: &Ctx, namespace: Namespace) -> NamespaceOpt
 pub fn namespace_opt_empty(_ctx: &Ctx) -> NamespaceOpt {
     None
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PredicateObject {
     pub predicate: Predicate,
     pub object: Object,
@@ -349,7 +349,7 @@ pub fn predicate_object_c1(
         object,
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Predicate {
     pub namespace: Namespace,
     pub identifier: Identifier,
@@ -361,7 +361,7 @@ pub fn predicate_c1(
 ) -> Predicate {
     Predicate { namespace, identifier }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Object {
     DataValue(DataValue),
     Reference(Reference),
@@ -372,7 +372,7 @@ pub fn object_data_value(_ctx: &Ctx, data_value: DataValue) -> Object {
 pub fn object_reference(_ctx: &Ctx, reference: Reference) -> Object {
     Object::Reference(reference)
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct DataValue {
     pub namespace: NamespaceOpt,
     pub shape_path: ShapePath,
@@ -384,7 +384,7 @@ pub fn data_value_c1(
 ) -> DataValue {
     DataValue { namespace, shape_path }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Reference {
     pub namespace: Namespace,
     pub identifier: Identifier,

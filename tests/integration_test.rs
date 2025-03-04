@@ -44,9 +44,9 @@ mod integration_test {
     fn test_iterators_single_expression_nested() {
         let parser = ShexmlParser::new();
         let input = read_test_file("iterators_single_expression_nested.shexml");
-        let expected = fs::read_to_string("./outputs/iterators_single_expression_nested_expected.ttl")
-            .expect("Failed to read path")
-            .replace("\r", "");
+        //let expected = fs::read_to_string("./outputs/iterators_single_expression_nested_expected.ttl")
+        //    .expect("Failed to read path")
+        //    .replace("\r", "");
 
         let result = parser.parse(&input);
 

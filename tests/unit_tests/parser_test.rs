@@ -2,14 +2,10 @@
 mod unit_tests {
     use shexml2rml::parser::shexml::ShexmlParser;
     use shexml2rml::parser::shexml_actions::Object::{DataValue, Reference};
-    use shexml2rml::parser::shexml_actions::{
-        Attribute, Attribute1, Class, DataValue as OtherDataValue, Expression, Iterator1,
-        IteratorFileRelation, Iterator_, NestedIterator, Predicate, PredicateObject, Prefix1,
-        Reference as OtherReference, Shape, Shape1, Source1, Subject, SubjectIdentifier,
-    };
+    use shexml2rml::parser::shexml_actions::{Attribute, Attribute1, Class, DataValue as OtherDataValue, Expression, Iterator1, IteratorFileRelation, Iterator, Predicate, PredicateObject, Prefix1, Reference as OtherReference, Shape, Shape1, Source1, Subject, SubjectIdentifier};
     use rustemo::Parser;
     use std::fs;
-    use std::iter::Iterator;
+    use std::iter::Iterator as AnotherIterator;
     use std::path::Path;
 
     fn read_test_file(file_name: &str) -> String {
@@ -118,9 +114,9 @@ mod unit_tests {
         assert_eq!(iterators.len(), 2, "Expected 2 ITERATORS declarations");
 
         let expected_iterators = vec![
-            Iterator_ {
+            Iterator {
                 identifier: String::from("film_xml"),
-                path_type: String::from("xpath:"),
+                path_type: Some(String::from("xpath:")),
                 path: String::from("//film"),
                 fields: Attribute1::from([
                     Attribute {
@@ -156,9 +152,10 @@ mod unit_tests {
                         path: String::from("crew/photography"),
                     },
                 ]),
-                iterators: Some(vec![
-                    NestedIterator {
+                iterators: Box::from(Some(vec![
+                    Iterator {
                         identifier: String::from("actors"),
+                        path_type: None,
                         path: String::from("cast/actor"),
                         fields: Attribute1::from([
                             Attribute {
@@ -176,8 +173,9 @@ mod unit_tests {
                         ]),
                         iterators: Box::new(None),
                     },
-                    NestedIterator {
+                    Iterator {
                         identifier: String::from("actresses"),
+                        path_type: None,
                         path: String::from("cast/actress"),
                         fields: Attribute1::from([
                             Attribute {
@@ -195,11 +193,11 @@ mod unit_tests {
                         ]),
                         iterators: Box::new(None),
                     },
-                ]),
+                ])),
             },
-            Iterator_ {
+            Iterator {
                 identifier: String::from("film_json"),
-                path_type: String::from("jsonpath:"),
+                path_type: Some(String::from("jsonpath:")),
                 path: String::from("$.films[*]"),
                 fields: Attribute1::from([
                     Attribute {
@@ -235,8 +233,9 @@ mod unit_tests {
                         path: String::from("crew.cinematography"),
                     },
                 ]),
-                iterators: Some(vec![NestedIterator {
+                iterators: Box::from(Some(vec![Iterator {
                     identifier: String::from("actors"),
+                    path_type: None,
                     path: String::from("cast[*]"),
                     fields: Attribute1::from([
                         Attribute {
@@ -249,7 +248,7 @@ mod unit_tests {
                         },
                     ]),
                     iterators: Box::new(None),
-                }]),
+                }])),
             },
         ];
 
@@ -451,18 +450,22 @@ mod unit_tests {
                             identifier: String::from("actor"),
                         },
                         object: Reference(OtherReference {
-                            identifier: String::from("Actor"),
+                            namespace: ":".to_string(),
+                            identifier: String::from("SomeIdentifier"),
                         }),
                     },
+
                     PredicateObject {
                         predicate: Predicate {
                             namespace: String::from("schema:"),
                             identifier: String::from("actor"),
                         },
                         object: Reference(OtherReference {
+                            namespace: ":".to_string(),
                             identifier: String::from("Actress"),
                         }),
                     },
+
                 ]),
             },
             Shape {

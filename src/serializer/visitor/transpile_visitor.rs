@@ -122,14 +122,12 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let subject_generator = &n.subject.subject_identifier.subject_generator.as_str();
 
-        let path;
-        let attr;
+        let mut path= "";
+        let mut attr= "";
 
         if let Some(pos) = subject_generator.rfind('.') {
             path = &subject_generator[..pos];
             attr = &subject_generator[pos + 1..];
-        } else {
-            panic!("Error parsing '{}{}' shape. Incorrect path syntax: {}", n.subject.class.namespace, n.subject.class.identifier, subject_generator);
         }
 
         let iterators = match self.iterators_for_expression.get(path) {
@@ -137,7 +135,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             None => return None,
         };
 
-        println!("Shape: {}.{}, Iterators: {:#?}", path, attr, iterators);
+        println!("Path: {} Attr: {}, Iterators: {:#?}", path, attr, iterators);
 
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
@@ -172,7 +170,13 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
         let object = if let Object::DataValue(data_value) = &p.object {
             let prefix_uri = data_value.namespace.as_ref().and_then(|prefix| self.prefixes.get(prefix)).map(|p| &p.uri).map_or("", |v| v);
-            let path = data_value.shape_path.split('.').nth(1).unwrap_or("");
+
+            let mut path= "";
+
+            if let Some(pos) = data_value.shape_path.rfind('.') {
+                path = &data_value.shape_path[pos + 1..];
+            }
+
             let term_type = match prefix_uri{
                 "" => TermType::Literal,
                 _ => TermType::IRI
