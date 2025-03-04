@@ -18,7 +18,7 @@ use rustemo::debug::{log, logn};
 #[cfg(debug_assertions)]
 use rustemo::colored::*;
 pub type Input = str;
-const STATE_COUNT: usize = 102usize;
+const STATE_COUNT: usize = 91usize;
 const MAX_RECOGNIZERS: usize = 6usize;
 #[allow(dead_code)]
 const TERMINAL_COUNT: usize = 23usize;
@@ -87,13 +87,10 @@ pub enum ProdKind {
     IteratorFileRelation1P2,
     IteratorFileRelationP1,
     IteratorP1,
+    PathLiteralOptP1,
+    PathLiteralOptP2,
     Attribute1P1,
     Attribute1P2,
-    NestedIterator1P1,
-    NestedIterator1P2,
-    NestedIterator0P1,
-    NestedIterator0P2,
-    NestedIteratorP1,
     AttributeP1,
     ShapeP1,
     PredicateObject1P1,
@@ -152,19 +149,12 @@ impl std::fmt::Debug for ProdKind {
                 "IteratorFileRelation: Identifier Dot Identifier"
             }
             ProdKind::IteratorP1 => {
-                "Iterator: IteratorLiteral Identifier OpenTag PathLiteral Path CloseTag OpenBrace Attribute1 NestedIterator0 CloseBrace"
+                "Iterator: IteratorLiteral Identifier OpenTag PathLiteralOpt Path CloseTag OpenBrace Attribute1 Iterator0 CloseBrace"
             }
+            ProdKind::PathLiteralOptP1 => "PathLiteralOpt: PathLiteral",
+            ProdKind::PathLiteralOptP2 => "PathLiteralOpt: ",
             ProdKind::Attribute1P1 => "Attribute1: Attribute1 Attribute",
             ProdKind::Attribute1P2 => "Attribute1: Attribute",
-            ProdKind::NestedIterator1P1 => {
-                "NestedIterator1: NestedIterator1 NestedIterator"
-            }
-            ProdKind::NestedIterator1P2 => "NestedIterator1: NestedIterator",
-            ProdKind::NestedIterator0P1 => "NestedIterator0: NestedIterator1",
-            ProdKind::NestedIterator0P2 => "NestedIterator0: ",
-            ProdKind::NestedIteratorP1 => {
-                "NestedIterator: IteratorLiteral Identifier OpenTag Path CloseTag OpenBrace Attribute1 NestedIterator0 CloseBrace"
-            }
             ProdKind::AttributeP1 => {
                 "Attribute: FieldLiteral Identifier OpenTag Path CloseTag"
             }
@@ -217,10 +207,8 @@ pub enum NonTermKind {
     IteratorFileRelation1,
     IteratorFileRelation,
     Iterator,
+    PathLiteralOpt,
     Attribute1,
-    NestedIterator1,
-    NestedIterator0,
-    NestedIterator,
     Attribute,
     Shape,
     PredicateObject1,
@@ -266,13 +254,10 @@ impl From<ProdKind> for NonTermKind {
             ProdKind::IteratorFileRelation1P2 => NonTermKind::IteratorFileRelation1,
             ProdKind::IteratorFileRelationP1 => NonTermKind::IteratorFileRelation,
             ProdKind::IteratorP1 => NonTermKind::Iterator,
+            ProdKind::PathLiteralOptP1 => NonTermKind::PathLiteralOpt,
+            ProdKind::PathLiteralOptP2 => NonTermKind::PathLiteralOpt,
             ProdKind::Attribute1P1 => NonTermKind::Attribute1,
             ProdKind::Attribute1P2 => NonTermKind::Attribute1,
-            ProdKind::NestedIterator1P1 => NonTermKind::NestedIterator1,
-            ProdKind::NestedIterator1P2 => NonTermKind::NestedIterator1,
-            ProdKind::NestedIterator0P1 => NonTermKind::NestedIterator0,
-            ProdKind::NestedIterator0P2 => NonTermKind::NestedIterator0,
-            ProdKind::NestedIteratorP1 => NonTermKind::NestedIterator,
             ProdKind::AttributeP1 => NonTermKind::Attribute,
             ProdKind::ShapeP1 => NonTermKind::Shape,
             ProdKind::PredicateObject1P1 => NonTermKind::PredicateObject1,
@@ -337,68 +322,57 @@ pub enum State {
     ClassS37,
     CloseTagS38,
     PathLiteralS39,
-    OpenTagS40,
-    IdentifierS41,
-    ShapeS42,
-    OpenBraceS43,
-    NamespaceS44,
-    SubjectIdentifierS45,
-    NamespaceOptS46,
-    PathS47,
-    IdentifierS48,
-    IteratorFileRelation1S49,
-    IteratorFileRelationS50,
-    NamespaceS51,
-    PredicateObject1S52,
-    PredicateObject0S53,
-    PredicateObjectS54,
-    PredicateS55,
-    OpenBracketS56,
-    CloseTagS57,
-    DotS58,
-    UnionLiteralS59,
-    CloseTagS60,
-    IdentifierS61,
-    PredicateObjectS62,
-    CloseBraceS63,
-    AtSignS64,
-    NamespaceOptS65,
-    ObjectS66,
-    DataValueS67,
-    ReferenceS68,
-    ShapePathS69,
-    OpenBraceS70,
-    IdentifierS71,
-    IteratorFileRelationS72,
-    NamespaceS73,
-    OpenBracketS74,
-    SemicolonS75,
-    CloseBracketS76,
-    FieldLiteralS77,
-    Attribute1S78,
-    AttributeS79,
-    IdentifierS80,
-    ShapePathS81,
-    IdentifierS82,
-    IteratorLiteralS83,
-    NestedIterator1S84,
-    NestedIterator0S85,
-    NestedIteratorS86,
-    AttributeS87,
-    CloseBracketS88,
-    OpenTagS89,
-    IdentifierS90,
-    NestedIteratorS91,
-    CloseBraceS92,
-    PathS93,
-    OpenTagS94,
-    CloseTagS95,
-    PathS96,
-    CloseTagS97,
-    OpenBraceS98,
-    Attribute1S99,
-    NestedIterator0S100,
-    CloseBraceS101,
+    PathLiteralOptS40,
+    OpenTagS41,
+    IdentifierS42,
+    ShapeS43,
+    OpenBraceS44,
+    NamespaceS45,
+    SubjectIdentifierS46,
+    NamespaceOptS47,
+    PathS48,
+    IdentifierS49,
+    IteratorFileRelation1S50,
+    IteratorFileRelationS51,
+    NamespaceS52,
+    PredicateObject1S53,
+    PredicateObject0S54,
+    PredicateObjectS55,
+    PredicateS56,
+    OpenBracketS57,
+    CloseTagS58,
+    DotS59,
+    UnionLiteralS60,
+    CloseTagS61,
+    IdentifierS62,
+    PredicateObjectS63,
+    CloseBraceS64,
+    AtSignS65,
+    NamespaceOptS66,
+    ObjectS67,
+    DataValueS68,
+    ReferenceS69,
+    ShapePathS70,
+    OpenBraceS71,
+    IdentifierS72,
+    IteratorFileRelationS73,
+    NamespaceS74,
+    OpenBracketS75,
+    SemicolonS76,
+    CloseBracketS77,
+    FieldLiteralS78,
+    Attribute1S79,
+    AttributeS80,
+    IdentifierS81,
+    ShapePathS82,
+    IdentifierS83,
+    Iterator0S84,
+    AttributeS85,
+    CloseBracketS86,
+    OpenTagS87,
+    CloseBraceS88,
+    PathS89,
+    CloseTagS90,
 }
 impl StateT for State {
     fn default_layout() -> Option<Self> {
@@ -453,68 +427,57 @@ impl std::fmt::Debug for State {
             State::ClassS37 => "37:Class",
             State::CloseTagS38 => "38:CloseTag",
             State::PathLiteralS39 => "39:PathLiteral",
-            State::OpenTagS40 => "40:OpenTag",
-            State::IdentifierS41 => "41:Identifier",
-            State::ShapeS42 => "42:Shape",
-            State::OpenBraceS43 => "43:OpenBrace",
-            State::NamespaceS44 => "44:Namespace",
-            State::SubjectIdentifierS45 => "45:SubjectIdentifier",
-            State::NamespaceOptS46 => "46:NamespaceOpt",
-            State::PathS47 => "47:Path",
-            State::IdentifierS48 => "48:Identifier",
-            State::IteratorFileRelation1S49 => "49:IteratorFileRelation1",
-            State::IteratorFileRelationS50 => "50:IteratorFileRelation",
-            State::NamespaceS51 => "51:Namespace",
-            State::PredicateObject1S52 => "52:PredicateObject1",
-            State::PredicateObject0S53 => "53:PredicateObject0",
-            State::PredicateObjectS54 => "54:PredicateObject",
-            State::PredicateS55 => "55:Predicate",
-            State::OpenBracketS56 => "56:OpenBracket",
-            State::CloseTagS57 => "57:CloseTag",
-            State::DotS58 => "58:Dot",
-            State::UnionLiteralS59 => "59:UnionLiteral",
-            State::CloseTagS60 => "60:CloseTag",
-            State::IdentifierS61 => "61:Identifier",
-            State::PredicateObjectS62 => "62:PredicateObject",
-            State::CloseBraceS63 => "63:CloseBrace",
-            State::AtSignS64 => "64:AtSign",
-            State::NamespaceOptS65 => "65:NamespaceOpt",
-            State::ObjectS66 => "66:Object",
-            State::DataValueS67 => "67:DataValue",
-            State::ReferenceS68 => "68:Reference",
-            State::ShapePathS69 => "69:ShapePath",
-            State::OpenBraceS70 => "70:OpenBrace",
-            State::IdentifierS71 => "71:Identifier",
-            State::IteratorFileRelationS72 => "72:IteratorFileRelation",
-            State::NamespaceS73 => "73:Namespace",
-            State::OpenBracketS74 => "74:OpenBracket",
-            State::SemicolonS75 => "75:Semicolon",
-            State::CloseBracketS76 => "76:CloseBracket",
-            State::FieldLiteralS77 => "77:FieldLiteral",
-            State::Attribute1S78 => "78:Attribute1",
-            State::AttributeS79 => "79:Attribute",
-            State::IdentifierS80 => "80:Identifier",
-            State::ShapePathS81 => "81:ShapePath",
-            State::IdentifierS82 => "82:Identifier",
-            State::IteratorLiteralS83 => "83:IteratorLiteral",
-            State::NestedIterator1S84 => "84:NestedIterator1",
-            State::NestedIterator0S85 => "85:NestedIterator0",
-            State::NestedIteratorS86 => "86:NestedIterator",
-            State::AttributeS87 => "87:Attribute",
-            State::CloseBracketS88 => "88:CloseBracket",
-            State::OpenTagS89 => "89:OpenTag",
-            State::IdentifierS90 => "90:Identifier",
-            State::NestedIteratorS91 => "91:NestedIterator",
-            State::CloseBraceS92 => "92:CloseBrace",
-            State::PathS93 => "93:Path",
-            State::OpenTagS94 => "94:OpenTag",
-            State::CloseTagS95 => "95:CloseTag",
-            State::PathS96 => "96:Path",
-            State::CloseTagS97 => "97:CloseTag",
-            State::OpenBraceS98 => "98:OpenBrace",
-            State::Attribute1S99 => "99:Attribute1",
-            State::NestedIterator0S100 => "100:NestedIterator0",
-            State::CloseBraceS101 => "101:CloseBrace",
+            State::PathLiteralOptS40 => "40:PathLiteralOpt",
+            State::OpenTagS41 => "41:OpenTag",
+            State::IdentifierS42 => "42:Identifier",
+            State::ShapeS43 => "43:Shape",
+            State::OpenBraceS44 => "44:OpenBrace",
+            State::NamespaceS45 => "45:Namespace",
+            State::SubjectIdentifierS46 => "46:SubjectIdentifier",
+            State::NamespaceOptS47 => "47:NamespaceOpt",
+            State::PathS48 => "48:Path",
+            State::IdentifierS49 => "49:Identifier",
+            State::IteratorFileRelation1S50 => "50:IteratorFileRelation1",
+            State::IteratorFileRelationS51 => "51:IteratorFileRelation",
+            State::NamespaceS52 => "52:Namespace",
+            State::PredicateObject1S53 => "53:PredicateObject1",
+            State::PredicateObject0S54 => "54:PredicateObject0",
+            State::PredicateObjectS55 => "55:PredicateObject",
+            State::PredicateS56 => "56:Predicate",
+            State::OpenBracketS57 => "57:OpenBracket",
+            State::CloseTagS58 => "58:CloseTag",
+            State::DotS59 => "59:Dot",
+            State::UnionLiteralS60 => "60:UnionLiteral",
+            State::CloseTagS61 => "61:CloseTag",
+            State::IdentifierS62 => "62:Identifier",
+            State::PredicateObjectS63 => "63:PredicateObject",
+            State::CloseBraceS64 => "64:CloseBrace",
+            State::AtSignS65 => "65:AtSign",
+            State::NamespaceOptS66 => "66:NamespaceOpt",
+            State::ObjectS67 => "67:Object",
+            State::DataValueS68 => "68:DataValue",
+            State::ReferenceS69 => "69:Reference",
+            State::ShapePathS70 => "70:ShapePath",
+            State::OpenBraceS71 => "71:OpenBrace",
+            State::IdentifierS72 => "72:Identifier",
+            State::IteratorFileRelationS73 => "73:IteratorFileRelation",
+            State::NamespaceS74 => "74:Namespace",
+            State::OpenBracketS75 => "75:OpenBracket",
+            State::SemicolonS76 => "76:Semicolon",
+            State::CloseBracketS77 => "77:CloseBracket",
+            State::FieldLiteralS78 => "78:FieldLiteral",
+            State::Attribute1S79 => "79:Attribute1",
+            State::AttributeS80 => "80:Attribute",
+            State::IdentifierS81 => "81:Identifier",
+            State::ShapePathS82 => "82:ShapePath",
+            State::IdentifierS83 => "83:Identifier",
+            State::Iterator0S84 => "84:Iterator0",
+            State::AttributeS85 => "85:Attribute",
+            State::CloseBracketS86 => "86:CloseBracket",
+            State::OpenTagS87 => "87:OpenTag",
+            State::CloseBraceS88 => "88:CloseBrace",
+            State::PathS89 => "89:Path",
+            State::CloseTagS90 => "90:CloseTag",
         };
         write!(f, "{name}")
     }
@@ -568,10 +531,8 @@ pub enum NonTerminal {
     IteratorFileRelation1(shexml_actions::IteratorFileRelation1),
     IteratorFileRelation(shexml_actions::IteratorFileRelation),
     Iterator(shexml_actions::Iterator),
+    PathLiteralOpt(shexml_actions::PathLiteralOpt),
     Attribute1(shexml_actions::Attribute1),
-    NestedIterator1(shexml_actions::NestedIterator1),
-    NestedIterator0(shexml_actions::NestedIterator0),
-    NestedIterator(shexml_actions::NestedIterator),
     Attribute(shexml_actions::Attribute),
     Shape(shexml_actions::Shape),
     PredicateObject1(shexml_actions::PredicateObject1),
@@ -732,6 +693,7 @@ fn action_iterator1_s16(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         TK::STOP => Vec::from(&[Reduce(PK::Iterator0P1, 1usize)]),
         TK::IteratorLiteral => Vec::from(&[Shift(State::IteratorLiteralS15)]),
         TK::ExpressionLiteral => Vec::from(&[Reduce(PK::Iterator0P1, 1usize)]),
+        TK::CloseBrace => Vec::from(&[Reduce(PK::Iterator0P1, 1usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::Iterator0P1, 1usize)]),
         _ => vec![],
     }
@@ -749,6 +711,7 @@ fn action_iterator_s18(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         TK::STOP => Vec::from(&[Reduce(PK::Iterator1P2, 1usize)]),
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::Iterator1P2, 1usize)]),
         TK::ExpressionLiteral => Vec::from(&[Reduce(PK::Iterator1P2, 1usize)]),
+        TK::CloseBrace => Vec::from(&[Reduce(PK::Iterator1P2, 1usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::Iterator1P2, 1usize)]),
         _ => vec![],
     }
@@ -776,6 +739,7 @@ fn action_iterator_s22(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         TK::STOP => Vec::from(&[Reduce(PK::Iterator1P1, 2usize)]),
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::Iterator1P1, 2usize)]),
         TK::ExpressionLiteral => Vec::from(&[Reduce(PK::Iterator1P1, 2usize)]),
+        TK::CloseBrace => Vec::from(&[Reduce(PK::Iterator1P1, 2usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::Iterator1P1, 2usize)]),
         _ => vec![],
     }
@@ -829,12 +793,13 @@ fn action_uri_s28(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 fn action_opentag_s29(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::PathLiteral => Vec::from(&[Shift(State::PathLiteralS39)]),
+        TK::Path => Vec::from(&[Reduce(PK::PathLiteralOptP2, 0usize)]),
         _ => vec![],
     }
 }
 fn action_identifier_s30(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenTag => Vec::from(&[Shift(State::OpenTagS40)]),
+        TK::OpenTag => Vec::from(&[Shift(State::OpenTagS41)]),
         _ => vec![],
     }
 }
@@ -848,7 +813,7 @@ fn action_expression_s31(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> 
 }
 fn action_namespace_s32(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS41)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS42)]),
         _ => vec![],
     }
 }
@@ -874,14 +839,14 @@ fn action_shape_s35(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_subject_s36(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenBrace => Vec::from(&[Shift(State::OpenBraceS43)]),
+        TK::OpenBrace => Vec::from(&[Shift(State::OpenBraceS44)]),
         _ => vec![],
     }
 }
 fn action_class_s37(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBracket => Vec::from(&[Reduce(PK::NamespaceOptP2, 0usize)]),
-        TK::Namespace => Vec::from(&[Shift(State::NamespaceS44)]),
+        TK::Namespace => Vec::from(&[Shift(State::NamespaceS45)]),
         _ => vec![],
     }
 }
@@ -897,77 +862,83 @@ fn action_closetag_s38(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
 }
 fn action_pathliteral_s39(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Path => Vec::from(&[Shift(State::PathS47)]),
+        TK::Path => Vec::from(&[Reduce(PK::PathLiteralOptP1, 1usize)]),
         _ => vec![],
     }
 }
-fn action_opentag_s40(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_pathliteralopt_s40(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS48)]),
+        TK::Path => Vec::from(&[Shift(State::PathS48)]),
         _ => vec![],
     }
 }
-fn action_identifier_s41(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_opentag_s41(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS49)]),
+        _ => vec![],
+    }
+}
+fn action_identifier_s42(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBracket => Vec::from(&[Reduce(PK::ClassP1, 2usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::ClassP1, 2usize)]),
         _ => vec![],
     }
 }
-fn action_shape_s42(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_shape_s43(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::STOP => Vec::from(&[Reduce(PK::Shape1P1, 2usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::Shape1P1, 2usize)]),
         _ => vec![],
     }
 }
-fn action_openbrace_s43(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_openbrace_s44(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::CloseBrace => Vec::from(&[Reduce(PK::PredicateObject0P2, 0usize)]),
-        TK::Namespace => Vec::from(&[Shift(State::NamespaceS51)]),
+        TK::Namespace => Vec::from(&[Shift(State::NamespaceS52)]),
         _ => vec![],
     }
 }
-fn action_namespace_s44(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_namespace_s45(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBracket => Vec::from(&[Reduce(PK::NamespaceOptP1, 1usize)]),
         _ => vec![],
     }
 }
-fn action_subjectidentifier_s45(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_subjectidentifier_s46(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBrace => Vec::from(&[Reduce(PK::SubjectP1, 2usize)]),
         _ => vec![],
     }
 }
-fn action_namespaceopt_s46(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_namespaceopt_s47(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenBracket => Vec::from(&[Shift(State::OpenBracketS56)]),
+        TK::OpenBracket => Vec::from(&[Shift(State::OpenBracketS57)]),
         _ => vec![],
     }
 }
-fn action_path_s47(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_path_s48(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS57)]),
+        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS58)]),
         _ => vec![],
     }
 }
-fn action_identifier_s48(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_identifier_s49(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Dot => Vec::from(&[Shift(State::DotS58)]),
+        TK::Dot => Vec::from(&[Shift(State::DotS59)]),
         _ => vec![],
     }
 }
-fn action_iteratorfilerelation1_s49(
+fn action_iteratorfilerelation1_s50(
     token_kind: TokenKind,
 ) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::UnionLiteral => Vec::from(&[Shift(State::UnionLiteralS59)]),
-        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS60)]),
+        TK::UnionLiteral => Vec::from(&[Shift(State::UnionLiteralS60)]),
+        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS61)]),
         _ => vec![],
     }
 }
-fn action_iteratorfilerelation_s50(
+fn action_iteratorfilerelation_s51(
     token_kind: TokenKind,
 ) -> Vec<Action<State, ProdKind>> {
     match token_kind {
@@ -976,65 +947,65 @@ fn action_iteratorfilerelation_s50(
         _ => vec![],
     }
 }
-fn action_namespace_s51(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_namespace_s52(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS61)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS62)]),
         _ => vec![],
     }
 }
-fn action_predicateobject1_s52(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_predicateobject1_s53(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::CloseBrace => Vec::from(&[Reduce(PK::PredicateObject0P1, 1usize)]),
-        TK::Namespace => Vec::from(&[Shift(State::NamespaceS51)]),
+        TK::Namespace => Vec::from(&[Shift(State::NamespaceS52)]),
         _ => vec![],
     }
 }
-fn action_predicateobject0_s53(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_predicateobject0_s54(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::CloseBrace => Vec::from(&[Shift(State::CloseBraceS63)]),
+        TK::CloseBrace => Vec::from(&[Shift(State::CloseBraceS64)]),
         _ => vec![],
     }
 }
-fn action_predicateobject_s54(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_predicateobject_s55(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::CloseBrace => Vec::from(&[Reduce(PK::PredicateObject1P2, 1usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::PredicateObject1P2, 1usize)]),
         _ => vec![],
     }
 }
-fn action_predicate_s55(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_predicate_s56(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBracket => Vec::from(&[Reduce(PK::NamespaceOptP2, 0usize)]),
-        TK::AtSign => Vec::from(&[Shift(State::AtSignS64)]),
-        TK::Namespace => Vec::from(&[Shift(State::NamespaceS44)]),
+        TK::AtSign => Vec::from(&[Shift(State::AtSignS65)]),
+        TK::Namespace => Vec::from(&[Shift(State::NamespaceS45)]),
         _ => vec![],
     }
 }
-fn action_openbracket_s56(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_openbracket_s57(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::ShapePath => Vec::from(&[Shift(State::ShapePathS69)]),
+        TK::ShapePath => Vec::from(&[Shift(State::ShapePathS70)]),
         _ => vec![],
     }
 }
-fn action_closetag_s57(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closetag_s58(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenBrace => Vec::from(&[Shift(State::OpenBraceS70)]),
+        TK::OpenBrace => Vec::from(&[Shift(State::OpenBraceS71)]),
         _ => vec![],
     }
 }
-fn action_dot_s58(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_dot_s59(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS71)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS72)]),
         _ => vec![],
     }
 }
-fn action_unionliteral_s59(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_unionliteral_s60(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS48)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS49)]),
         _ => vec![],
     }
 }
-fn action_closetag_s60(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closetag_s61(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::STOP => Vec::from(&[Reduce(PK::ExpressionP1, 5usize)]),
         TK::ExpressionLiteral => Vec::from(&[Reduce(PK::ExpressionP1, 5usize)]),
@@ -1042,7 +1013,7 @@ fn action_closetag_s60(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         _ => vec![],
     }
 }
-fn action_identifier_s61(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_identifier_s62(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBracket => Vec::from(&[Reduce(PK::PredicateP1, 2usize)]),
         TK::AtSign => Vec::from(&[Reduce(PK::PredicateP1, 2usize)]),
@@ -1050,70 +1021,70 @@ fn action_identifier_s61(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> 
         _ => vec![],
     }
 }
-fn action_predicateobject_s62(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_predicateobject_s63(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::CloseBrace => Vec::from(&[Reduce(PK::PredicateObject1P1, 2usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::PredicateObject1P1, 2usize)]),
         _ => vec![],
     }
 }
-fn action_closebrace_s63(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closebrace_s64(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::STOP => Vec::from(&[Reduce(PK::ShapeP1, 4usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::ShapeP1, 4usize)]),
         _ => vec![],
     }
 }
-fn action_atsign_s64(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_atsign_s65(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Namespace => Vec::from(&[Shift(State::NamespaceS73)]),
+        TK::Namespace => Vec::from(&[Shift(State::NamespaceS74)]),
         _ => vec![],
     }
 }
-fn action_namespaceopt_s65(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_namespaceopt_s66(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenBracket => Vec::from(&[Shift(State::OpenBracketS74)]),
+        TK::OpenBracket => Vec::from(&[Shift(State::OpenBracketS75)]),
         _ => vec![],
     }
 }
-fn action_object_s66(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_object_s67(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Semicolon => Vec::from(&[Shift(State::SemicolonS75)]),
+        TK::Semicolon => Vec::from(&[Shift(State::SemicolonS76)]),
         _ => vec![],
     }
 }
-fn action_datavalue_s67(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_datavalue_s68(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::Semicolon => Vec::from(&[Reduce(PK::ObjectP1, 1usize)]),
         _ => vec![],
     }
 }
-fn action_reference_s68(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_reference_s69(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::Semicolon => Vec::from(&[Reduce(PK::ObjectP2, 1usize)]),
         _ => vec![],
     }
 }
-fn action_shapepath_s69(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_shapepath_s70(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::CloseBracket => Vec::from(&[Shift(State::CloseBracketS76)]),
+        TK::CloseBracket => Vec::from(&[Shift(State::CloseBracketS77)]),
         _ => vec![],
     }
 }
-fn action_openbrace_s70(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_openbrace_s71(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS77)]),
+        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS78)]),
         _ => vec![],
     }
 }
-fn action_identifier_s71(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_identifier_s72(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::UnionLiteral => Vec::from(&[Reduce(PK::IteratorFileRelationP1, 3usize)]),
         TK::CloseTag => Vec::from(&[Reduce(PK::IteratorFileRelationP1, 3usize)]),
         _ => vec![],
     }
 }
-fn action_iteratorfilerelation_s72(
+fn action_iteratorfilerelation_s73(
     token_kind: TokenKind,
 ) -> Vec<Action<State, ProdKind>> {
     match token_kind {
@@ -1122,46 +1093,46 @@ fn action_iteratorfilerelation_s72(
         _ => vec![],
     }
 }
-fn action_namespace_s73(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_namespace_s74(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS80)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS81)]),
         _ => vec![],
     }
 }
-fn action_openbracket_s74(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_openbracket_s75(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::ShapePath => Vec::from(&[Shift(State::ShapePathS81)]),
+        TK::ShapePath => Vec::from(&[Shift(State::ShapePathS82)]),
         _ => vec![],
     }
 }
-fn action_semicolon_s75(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_semicolon_s76(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::CloseBrace => Vec::from(&[Reduce(PK::PredicateObjectP1, 3usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::PredicateObjectP1, 3usize)]),
         _ => vec![],
     }
 }
-fn action_closebracket_s76(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closebracket_s77(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::OpenBrace => Vec::from(&[Reduce(PK::SubjectIdentifierP1, 4usize)]),
         _ => vec![],
     }
 }
-fn action_fieldliteral_s77(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_fieldliteral_s78(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS82)]),
+        TK::Identifier => Vec::from(&[Shift(State::IdentifierS83)]),
         _ => vec![],
     }
 }
-fn action_attribute1_s78(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_attribute1_s79(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Shift(State::IteratorLiteralS83)]),
-        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS77)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIterator0P2, 0usize)]),
+        TK::IteratorLiteral => Vec::from(&[Shift(State::IteratorLiteralS15)]),
+        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS78)]),
+        TK::CloseBrace => Vec::from(&[Reduce(PK::Iterator0P2, 0usize)]),
         _ => vec![],
     }
 }
-fn action_attribute_s79(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_attribute_s80(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::Attribute1P2, 1usize)]),
         TK::FieldLiteral => Vec::from(&[Reduce(PK::Attribute1P2, 1usize)]),
@@ -1169,51 +1140,31 @@ fn action_attribute_s79(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         _ => vec![],
     }
 }
-fn action_identifier_s80(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_identifier_s81(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::Semicolon => Vec::from(&[Reduce(PK::ReferenceP1, 3usize)]),
         _ => vec![],
     }
 }
-fn action_shapepath_s81(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_shapepath_s82(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::CloseBracket => Vec::from(&[Shift(State::CloseBracketS88)]),
+        TK::CloseBracket => Vec::from(&[Shift(State::CloseBracketS86)]),
         _ => vec![],
     }
 }
-fn action_identifier_s82(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_identifier_s83(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::OpenTag => Vec::from(&[Shift(State::OpenTagS89)]),
+        TK::OpenTag => Vec::from(&[Shift(State::OpenTagS87)]),
         _ => vec![],
     }
 }
-fn action_iteratorliteral_s83(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_iterator0_s84(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Identifier => Vec::from(&[Shift(State::IdentifierS90)]),
+        TK::CloseBrace => Vec::from(&[Shift(State::CloseBraceS88)]),
         _ => vec![],
     }
 }
-fn action_nestediterator1_s84(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Shift(State::IteratorLiteralS83)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIterator0P1, 1usize)]),
-        _ => vec![],
-    }
-}
-fn action_nestediterator0_s85(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::CloseBrace => Vec::from(&[Shift(State::CloseBraceS92)]),
-        _ => vec![],
-    }
-}
-fn action_nestediterator_s86(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Reduce(PK::NestedIterator1P2, 1usize)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIterator1P2, 1usize)]),
-        _ => vec![],
-    }
-}
-fn action_attribute_s87(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_attribute_s85(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::Attribute1P1, 2usize)]),
         TK::FieldLiteral => Vec::from(&[Reduce(PK::Attribute1P1, 2usize)]),
@@ -1221,96 +1172,39 @@ fn action_attribute_s87(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
         _ => vec![],
     }
 }
-fn action_closebracket_s88(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closebracket_s86(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::Semicolon => Vec::from(&[Reduce(PK::DataValueP1, 4usize)]),
         _ => vec![],
     }
 }
-fn action_opentag_s89(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_opentag_s87(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::Path => Vec::from(&[Shift(State::PathS93)]),
+        TK::Path => Vec::from(&[Shift(State::PathS89)]),
         _ => vec![],
     }
 }
-fn action_identifier_s90(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::OpenTag => Vec::from(&[Shift(State::OpenTagS94)]),
-        _ => vec![],
-    }
-}
-fn action_nestediterator_s91(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Reduce(PK::NestedIterator1P1, 2usize)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIterator1P1, 2usize)]),
-        _ => vec![],
-    }
-}
-fn action_closebrace_s92(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closebrace_s88(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::STOP => Vec::from(&[Reduce(PK::IteratorP1, 10usize)]),
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::IteratorP1, 10usize)]),
         TK::ExpressionLiteral => Vec::from(&[Reduce(PK::IteratorP1, 10usize)]),
+        TK::CloseBrace => Vec::from(&[Reduce(PK::IteratorP1, 10usize)]),
         TK::Namespace => Vec::from(&[Reduce(PK::IteratorP1, 10usize)]),
         _ => vec![],
     }
 }
-fn action_path_s93(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_path_s89(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
-        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS95)]),
+        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS90)]),
         _ => vec![],
     }
 }
-fn action_opentag_s94(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::Path => Vec::from(&[Shift(State::PathS96)]),
-        _ => vec![],
-    }
-}
-fn action_closetag_s95(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+fn action_closetag_s90(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
     match token_kind {
         TK::IteratorLiteral => Vec::from(&[Reduce(PK::AttributeP1, 5usize)]),
         TK::FieldLiteral => Vec::from(&[Reduce(PK::AttributeP1, 5usize)]),
         TK::CloseBrace => Vec::from(&[Reduce(PK::AttributeP1, 5usize)]),
-        _ => vec![],
-    }
-}
-fn action_path_s96(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::CloseTag => Vec::from(&[Shift(State::CloseTagS97)]),
-        _ => vec![],
-    }
-}
-fn action_closetag_s97(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::OpenBrace => Vec::from(&[Shift(State::OpenBraceS98)]),
-        _ => vec![],
-    }
-}
-fn action_openbrace_s98(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS77)]),
-        _ => vec![],
-    }
-}
-fn action_attribute1_s99(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Shift(State::IteratorLiteralS83)]),
-        TK::FieldLiteral => Vec::from(&[Shift(State::FieldLiteralS77)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIterator0P2, 0usize)]),
-        _ => vec![],
-    }
-}
-fn action_nestediterator0_s100(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::CloseBrace => Vec::from(&[Shift(State::CloseBraceS101)]),
-        _ => vec![],
-    }
-}
-fn action_closebrace_s101(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
-    match token_kind {
-        TK::IteratorLiteral => Vec::from(&[Reduce(PK::NestedIteratorP1, 9usize)]),
-        TK::CloseBrace => Vec::from(&[Reduce(PK::NestedIteratorP1, 9usize)]),
         _ => vec![],
     }
 }
@@ -1426,9 +1320,20 @@ fn goto_expression0_s25(nonterm_kind: NonTermKind) -> State {
         }
     }
 }
+fn goto_opentag_s29(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::PathLiteralOpt => State::PathLiteralOptS40,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::OpenTagS29
+            )
+        }
+    }
+}
 fn goto_shape1_s33(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::Shape => State::ShapeS42,
+        NonTermKind::Shape => State::ShapeS43,
         NonTermKind::Subject => State::SubjectS36,
         NonTermKind::Class => State::ClassS37,
         _ => {
@@ -1441,8 +1346,8 @@ fn goto_shape1_s33(nonterm_kind: NonTermKind) -> State {
 }
 fn goto_class_s37(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::SubjectIdentifier => State::SubjectIdentifierS45,
-        NonTermKind::NamespaceOpt => State::NamespaceOptS46,
+        NonTermKind::SubjectIdentifier => State::SubjectIdentifierS46,
+        NonTermKind::NamespaceOpt => State::NamespaceOptS47,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
@@ -1451,128 +1356,91 @@ fn goto_class_s37(nonterm_kind: NonTermKind) -> State {
         }
     }
 }
-fn goto_opentag_s40(nonterm_kind: NonTermKind) -> State {
+fn goto_opentag_s41(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::IteratorFileRelation1 => State::IteratorFileRelation1S49,
-        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS50,
+        NonTermKind::IteratorFileRelation1 => State::IteratorFileRelation1S50,
+        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS51,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenTagS40
+                State::OpenTagS41
             )
         }
     }
 }
-fn goto_openbrace_s43(nonterm_kind: NonTermKind) -> State {
+fn goto_openbrace_s44(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::PredicateObject1 => State::PredicateObject1S52,
-        NonTermKind::PredicateObject0 => State::PredicateObject0S53,
-        NonTermKind::PredicateObject => State::PredicateObjectS54,
-        NonTermKind::Predicate => State::PredicateS55,
+        NonTermKind::PredicateObject1 => State::PredicateObject1S53,
+        NonTermKind::PredicateObject0 => State::PredicateObject0S54,
+        NonTermKind::PredicateObject => State::PredicateObjectS55,
+        NonTermKind::Predicate => State::PredicateS56,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenBraceS43
+                State::OpenBraceS44
             )
         }
     }
 }
-fn goto_predicateobject1_s52(nonterm_kind: NonTermKind) -> State {
+fn goto_predicateobject1_s53(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::PredicateObject => State::PredicateObjectS62,
-        NonTermKind::Predicate => State::PredicateS55,
+        NonTermKind::PredicateObject => State::PredicateObjectS63,
+        NonTermKind::Predicate => State::PredicateS56,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::PredicateObject1S52
+                State::PredicateObject1S53
             )
         }
     }
 }
-fn goto_predicate_s55(nonterm_kind: NonTermKind) -> State {
+fn goto_predicate_s56(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::NamespaceOpt => State::NamespaceOptS65,
-        NonTermKind::Object => State::ObjectS66,
-        NonTermKind::DataValue => State::DataValueS67,
-        NonTermKind::Reference => State::ReferenceS68,
+        NonTermKind::NamespaceOpt => State::NamespaceOptS66,
+        NonTermKind::Object => State::ObjectS67,
+        NonTermKind::DataValue => State::DataValueS68,
+        NonTermKind::Reference => State::ReferenceS69,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::PredicateS55
+                State::PredicateS56
             )
         }
     }
 }
-fn goto_unionliteral_s59(nonterm_kind: NonTermKind) -> State {
+fn goto_unionliteral_s60(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS72,
+        NonTermKind::IteratorFileRelation => State::IteratorFileRelationS73,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::UnionLiteralS59
+                State::UnionLiteralS60
             )
         }
     }
 }
-fn goto_openbrace_s70(nonterm_kind: NonTermKind) -> State {
+fn goto_openbrace_s71(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::Attribute1 => State::Attribute1S78,
-        NonTermKind::Attribute => State::AttributeS79,
+        NonTermKind::Attribute1 => State::Attribute1S79,
+        NonTermKind::Attribute => State::AttributeS80,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenBraceS70
+                State::OpenBraceS71
             )
         }
     }
 }
-fn goto_attribute1_s78(nonterm_kind: NonTermKind) -> State {
+fn goto_attribute1_s79(nonterm_kind: NonTermKind) -> State {
     match nonterm_kind {
-        NonTermKind::NestedIterator1 => State::NestedIterator1S84,
-        NonTermKind::NestedIterator0 => State::NestedIterator0S85,
-        NonTermKind::NestedIterator => State::NestedIteratorS86,
-        NonTermKind::Attribute => State::AttributeS87,
+        NonTermKind::Iterator1 => State::Iterator1S16,
+        NonTermKind::Iterator0 => State::Iterator0S84,
+        NonTermKind::Iterator => State::IteratorS18,
+        NonTermKind::Attribute => State::AttributeS85,
         _ => {
             panic!(
                 "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::Attribute1S78
-            )
-        }
-    }
-}
-fn goto_nestediterator1_s84(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::NestedIterator => State::NestedIteratorS91,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::NestedIterator1S84
-            )
-        }
-    }
-}
-fn goto_openbrace_s98(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::Attribute1 => State::Attribute1S99,
-        NonTermKind::Attribute => State::AttributeS79,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::OpenBraceS98
-            )
-        }
-    }
-}
-fn goto_attribute1_s99(nonterm_kind: NonTermKind) -> State {
-    match nonterm_kind {
-        NonTermKind::NestedIterator1 => State::NestedIterator1S84,
-        NonTermKind::NestedIterator0 => State::NestedIterator0S100,
-        NonTermKind::NestedIterator => State::NestedIteratorS86,
-        NonTermKind::Attribute => State::AttributeS87,
-        _ => {
-            panic!(
-                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
-                State::Attribute1S99
+                State::Attribute1S79
             )
         }
     }
@@ -1622,68 +1490,57 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         action_class_s37,
         action_closetag_s38,
         action_pathliteral_s39,
-        action_opentag_s40,
-        action_identifier_s41,
-        action_shape_s42,
-        action_openbrace_s43,
-        action_namespace_s44,
-        action_subjectidentifier_s45,
-        action_namespaceopt_s46,
-        action_path_s47,
-        action_identifier_s48,
-        action_iteratorfilerelation1_s49,
-        action_iteratorfilerelation_s50,
-        action_namespace_s51,
-        action_predicateobject1_s52,
-        action_predicateobject0_s53,
-        action_predicateobject_s54,
-        action_predicate_s55,
-        action_openbracket_s56,
-        action_closetag_s57,
-        action_dot_s58,
-        action_unionliteral_s59,
-        action_closetag_s60,
-        action_identifier_s61,
-        action_predicateobject_s62,
-        action_closebrace_s63,
-        action_atsign_s64,
-        action_namespaceopt_s65,
-        action_object_s66,
-        action_datavalue_s67,
-        action_reference_s68,
-        action_shapepath_s69,
-        action_openbrace_s70,
-        action_identifier_s71,
-        action_iteratorfilerelation_s72,
-        action_namespace_s73,
-        action_openbracket_s74,
-        action_semicolon_s75,
-        action_closebracket_s76,
-        action_fieldliteral_s77,
-        action_attribute1_s78,
-        action_attribute_s79,
-        action_identifier_s80,
-        action_shapepath_s81,
-        action_identifier_s82,
-        action_iteratorliteral_s83,
-        action_nestediterator1_s84,
-        action_nestediterator0_s85,
-        action_nestediterator_s86,
-        action_attribute_s87,
-        action_closebracket_s88,
-        action_opentag_s89,
-        action_identifier_s90,
-        action_nestediterator_s91,
-        action_closebrace_s92,
-        action_path_s93,
-        action_opentag_s94,
-        action_closetag_s95,
-        action_path_s96,
-        action_closetag_s97,
-        action_openbrace_s98,
-        action_attribute1_s99,
-        action_nestediterator0_s100,
-        action_closebrace_s101,
+        action_pathliteralopt_s40,
+        action_opentag_s41,
+        action_identifier_s42,
+        action_shape_s43,
+        action_openbrace_s44,
+        action_namespace_s45,
+        action_subjectidentifier_s46,
+        action_namespaceopt_s47,
+        action_path_s48,
+        action_identifier_s49,
+        action_iteratorfilerelation1_s50,
+        action_iteratorfilerelation_s51,
+        action_namespace_s52,
+        action_predicateobject1_s53,
+        action_predicateobject0_s54,
+        action_predicateobject_s55,
+        action_predicate_s56,
+        action_openbracket_s57,
+        action_closetag_s58,
+        action_dot_s59,
+        action_unionliteral_s60,
+        action_closetag_s61,
+        action_identifier_s62,
+        action_predicateobject_s63,
+        action_closebrace_s64,
+        action_atsign_s65,
+        action_namespaceopt_s66,
+        action_object_s67,
+        action_datavalue_s68,
+        action_reference_s69,
+        action_shapepath_s70,
+        action_openbrace_s71,
+        action_identifier_s72,
+        action_iteratorfilerelation_s73,
+        action_namespace_s74,
+        action_openbracket_s75,
+        action_semicolon_s76,
+        action_closebracket_s77,
+        action_fieldliteral_s78,
+        action_attribute1_s79,
+        action_attribute_s80,
+        action_identifier_s81,
+        action_shapepath_s82,
+        action_identifier_s83,
+        action_iterator0_s84,
+        action_attribute_s85,
+        action_closebracket_s86,
+        action_opentag_s87,
+        action_closebrace_s88,
+        action_path_s89,
+        action_closetag_s90,
     ],
     gotos: [
         goto_aug_s0,
@@ -1715,7 +1572,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_invalid,
+        goto_opentag_s29,
         goto_invalid,
         goto_invalid,
         goto_invalid,
@@ -1726,26 +1583,11 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_class_s37,
         goto_invalid,
         goto_invalid,
-        goto_opentag_s40,
+        goto_invalid,
+        goto_opentag_s41,
         goto_invalid,
         goto_invalid,
-        goto_openbrace_s43,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_predicateobject1_s52,
-        goto_invalid,
-        goto_invalid,
-        goto_predicate_s55,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_unionliteral_s59,
+        goto_openbrace_s44,
         goto_invalid,
         goto_invalid,
         goto_invalid,
@@ -1754,23 +1596,14 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_invalid,
         goto_invalid,
         goto_invalid,
+        goto_predicateobject1_s53,
         goto_invalid,
         goto_invalid,
-        goto_openbrace_s70,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
+        goto_predicate_s56,
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_attribute1_s78,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_invalid,
-        goto_nestediterator1_s84,
+        goto_unionliteral_s60,
         goto_invalid,
         goto_invalid,
         goto_invalid,
@@ -1781,11 +1614,24 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         goto_invalid,
         goto_invalid,
         goto_invalid,
+        goto_openbrace_s71,
         goto_invalid,
         goto_invalid,
         goto_invalid,
-        goto_openbrace_s98,
-        goto_attribute1_s99,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_attribute1_s79,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
         goto_invalid,
         goto_invalid,
     ],
@@ -1873,8 +1719,8 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::STOP, true)),
             Some((TK::ExpressionLiteral, true)),
             Some((TK::IteratorLiteral, true)),
+            Some((TK::CloseBrace, true)),
             Some((TK::Namespace, false)),
-            None,
             None,
         ],
         [
@@ -1889,8 +1735,8 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::STOP, true)),
             Some((TK::ExpressionLiteral, true)),
             Some((TK::IteratorLiteral, true)),
+            Some((TK::CloseBrace, true)),
             Some((TK::Namespace, false)),
-            None,
             None,
         ],
         [Some((TK::CloseTag, true)), None, None, None, None, None],
@@ -1900,8 +1746,8 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::STOP, true)),
             Some((TK::ExpressionLiteral, true)),
             Some((TK::IteratorLiteral, true)),
+            Some((TK::CloseBrace, true)),
             Some((TK::Namespace, false)),
-            None,
             None,
         ],
         [Some((TK::Identifier, false)), None, None, None, None, None],
@@ -1931,7 +1777,14 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::Namespace, false)),
         ],
         [Some((TK::CloseTag, true)), None, None, None, None, None],
-        [Some((TK::PathLiteral, false)), None, None, None, None, None],
+        [
+            Some((TK::PathLiteral, false)),
+            Some((TK::Path, false)),
+            None,
+            None,
+            None,
+            None,
+        ],
         [Some((TK::OpenTag, true)), None, None, None, None, None],
         [
             Some((TK::STOP, true)),
@@ -1962,6 +1815,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
             Some((TK::Namespace, false)),
             None,
         ],
+        [Some((TK::Path, false)), None, None, None, None, None],
         [Some((TK::Path, false)), None, None, None, None, None],
         [Some((TK::Identifier, false)), None, None, None, None, None],
         [
@@ -2111,24 +1965,7 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         [Some((TK::Semicolon, true)), None, None, None, None, None],
         [Some((TK::CloseBracket, true)), None, None, None, None, None],
         [Some((TK::OpenTag, true)), None, None, None, None, None],
-        [Some((TK::Identifier, false)), None, None, None, None, None],
-        [
-            Some((TK::IteratorLiteral, true)),
-            Some((TK::CloseBrace, true)),
-            None,
-            None,
-            None,
-            None,
-        ],
         [Some((TK::CloseBrace, true)), None, None, None, None, None],
-        [
-            Some((TK::IteratorLiteral, true)),
-            Some((TK::CloseBrace, true)),
-            None,
-            None,
-            None,
-            None,
-        ],
         [
             Some((TK::IteratorLiteral, true)),
             Some((TK::FieldLiteral, true)),
@@ -2139,49 +1976,19 @@ pub(crate) static PARSER_DEFINITION: ShexmlParserDefinition = ShexmlParserDefini
         ],
         [Some((TK::Semicolon, true)), None, None, None, None, None],
         [Some((TK::Path, false)), None, None, None, None, None],
-        [Some((TK::OpenTag, true)), None, None, None, None, None],
-        [
-            Some((TK::IteratorLiteral, true)),
-            Some((TK::CloseBrace, true)),
-            None,
-            None,
-            None,
-            None,
-        ],
         [
             Some((TK::STOP, true)),
             Some((TK::ExpressionLiteral, true)),
             Some((TK::IteratorLiteral, true)),
+            Some((TK::CloseBrace, true)),
             Some((TK::Namespace, false)),
             None,
-            None,
         ],
         [Some((TK::CloseTag, true)), None, None, None, None, None],
-        [Some((TK::Path, false)), None, None, None, None, None],
         [
             Some((TK::IteratorLiteral, true)),
             Some((TK::FieldLiteral, true)),
             Some((TK::CloseBrace, true)),
-            None,
-            None,
-            None,
-        ],
-        [Some((TK::CloseTag, true)), None, None, None, None, None],
-        [Some((TK::OpenBrace, true)), None, None, None, None, None],
-        [Some((TK::FieldLiteral, true)), None, None, None, None, None],
-        [
-            Some((TK::IteratorLiteral, true)),
-            Some((TK::FieldLiteral, true)),
-            Some((TK::CloseBrace, true)),
-            None,
-            None,
-            None,
-        ],
-        [Some((TK::CloseBrace, true)), None, None, None, None, None],
-        [
-            Some((TK::IteratorLiteral, true)),
-            Some((TK::CloseBrace, true)),
-            None,
             None,
             None,
             None,
@@ -2849,12 +2656,12 @@ for DefaultBuilder {
                         _,
                         Symbol::Terminal(Terminal::Identifier(p0)),
                         _,
-                        Symbol::Terminal(Terminal::PathLiteral(p1)),
+                        Symbol::NonTerminal(NonTerminal::PathLiteralOpt(p1)),
                         Symbol::Terminal(Terminal::Path(p2)),
                         _,
                         _,
                         Symbol::NonTerminal(NonTerminal::Attribute1(p3)),
-                        Symbol::NonTerminal(NonTerminal::NestedIterator0(p4)),
+                        Symbol::NonTerminal(NonTerminal::Iterator0(p4)),
                         _,
                     ) => {
                         NonTerminal::Iterator(
@@ -2863,6 +2670,25 @@ for DefaultBuilder {
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
+            }
+            ProdKind::PathLiteralOptP1 => {
+                let mut i = self
+                    .res_stack
+                    .split_off(self.res_stack.len() - 1usize)
+                    .into_iter();
+                match i.next().unwrap() {
+                    Symbol::Terminal(Terminal::PathLiteral(p0)) => {
+                        NonTerminal::PathLiteralOpt(
+                            shexml_actions::path_literal_opt_path_literal(context, p0),
+                        )
+                    }
+                    _ => panic!("Invalid symbol parse stack data."),
+                }
+            }
+            ProdKind::PathLiteralOptP2 => {
+                NonTerminal::PathLiteralOpt(
+                    shexml_actions::path_literal_opt_empty(context),
+                )
             }
             ProdKind::Attribute1P1 => {
                 let mut i = self
@@ -2890,93 +2716,6 @@ for DefaultBuilder {
                     Symbol::NonTerminal(NonTerminal::Attribute(p0)) => {
                         NonTerminal::Attribute1(
                             shexml_actions::attribute1_attribute(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::NestedIterator1P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 2usize)
-                    .into_iter();
-                match (i.next().unwrap(), i.next().unwrap()) {
-                    (
-                        Symbol::NonTerminal(NonTerminal::NestedIterator1(p0)),
-                        Symbol::NonTerminal(NonTerminal::NestedIterator(p1)),
-                    ) => {
-                        NonTerminal::NestedIterator1(
-                            shexml_actions::nested_iterator1_c1(context, p0, p1),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::NestedIterator1P2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::NestedIterator(p0)) => {
-                        NonTerminal::NestedIterator1(
-                            shexml_actions::nested_iterator1_nested_iterator(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::NestedIterator0P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::NestedIterator1(p0)) => {
-                        NonTerminal::NestedIterator0(
-                            shexml_actions::nested_iterator0_nested_iterator1(
-                                context,
-                                p0,
-                            ),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::NestedIterator0P2 => {
-                NonTerminal::NestedIterator0(
-                    shexml_actions::nested_iterator0_empty(context),
-                )
-            }
-            ProdKind::NestedIteratorP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 9usize)
-                    .into_iter();
-                match (
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                    i.next().unwrap(),
-                ) {
-                    (
-                        _,
-                        Symbol::Terminal(Terminal::Identifier(p0)),
-                        _,
-                        Symbol::Terminal(Terminal::Path(p1)),
-                        _,
-                        _,
-                        Symbol::NonTerminal(NonTerminal::Attribute1(p2)),
-                        Symbol::NonTerminal(NonTerminal::NestedIterator0(p3)),
-                        _,
-                    ) => {
-                        NonTerminal::NestedIterator(
-                            shexml_actions::nested_iterator_c1(context, p0, p1, p2, p3),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),

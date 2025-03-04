@@ -53,21 +53,9 @@ where
         for field in &n.fields {
             self.visit_attribute(field, &obj);
         }
-        if let Some(nested) = &n.iterators {
-            for nested_iterator in nested {
-                self.visit_nested_iterator(nested_iterator, &obj);
-            }
-        }
-        T::default()
-    }
-
-    fn visit_nested_iterator(&mut self, n: &NestedIterator, obj: &T) -> T {
-        for field in &n.fields {
-            self.visit_attribute(field, &obj);
-        }
         if let Some(nested) = n.iterators.as_ref().as_ref() {
-            for nested_iterator in nested {
-                self.visit_nested_iterator(nested_iterator, &obj);
+            for iterator in nested {
+                self.visit_iterator(iterator, &obj);
             }
         }
         T::default()

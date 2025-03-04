@@ -198,26 +198,36 @@ pub fn iterator_file_relation_c1(
 #[derive(Debug, Clone)]
 pub struct Iterator {
     pub identifier: Identifier,
-    pub path_type: PathLiteral,
+    pub path_type: PathLiteralOpt,
     pub path: Path,
     pub fields: Attribute1,
-    pub iterators: NestedIterator0,
+    pub iterators: Box<Iterator0>,
 }
 pub fn iterator_c1(
     _ctx: &Ctx,
     identifier: Identifier,
-    path_type: PathLiteral,
+    path_type: PathLiteralOpt,
     path: Path,
     fields: Attribute1,
-    iterators: NestedIterator0,
+    iterators: Iterator0,
 ) -> Iterator {
     Iterator {
         identifier,
         path_type,
         path,
         fields,
-        iterators,
+        iterators: Box::new(iterators),
     }
+}
+pub type PathLiteralOpt = Option<PathLiteral>;
+pub fn path_literal_opt_path_literal(
+    _ctx: &Ctx,
+    path_literal: PathLiteral,
+) -> PathLiteralOpt {
+    Some(path_literal)
+}
+pub fn path_literal_opt_empty(_ctx: &Ctx) -> PathLiteralOpt {
+    None
 }
 pub type Attribute1 = Vec<Attribute>;
 pub fn attribute1_c1(
@@ -230,52 +240,6 @@ pub fn attribute1_c1(
 }
 pub fn attribute1_attribute(_ctx: &Ctx, attribute: Attribute) -> Attribute1 {
     vec![attribute]
-}
-pub type NestedIterator1 = Vec<NestedIterator>;
-pub fn nested_iterator1_c1(
-    _ctx: &Ctx,
-    mut nested_iterator1: NestedIterator1,
-    nested_iterator: NestedIterator,
-) -> NestedIterator1 {
-    nested_iterator1.push(nested_iterator);
-    nested_iterator1
-}
-pub fn nested_iterator1_nested_iterator(
-    _ctx: &Ctx,
-    nested_iterator: NestedIterator,
-) -> NestedIterator1 {
-    vec![nested_iterator]
-}
-pub type NestedIterator0 = Option<NestedIterator1>;
-pub fn nested_iterator0_nested_iterator1(
-    _ctx: &Ctx,
-    nested_iterator1: NestedIterator1,
-) -> NestedIterator0 {
-    Some(nested_iterator1)
-}
-pub fn nested_iterator0_empty(_ctx: &Ctx) -> NestedIterator0 {
-    None
-}
-#[derive(Debug, Clone)]
-pub struct NestedIterator {
-    pub identifier: Identifier,
-    pub path: Path,
-    pub fields: Attribute1,
-    pub iterators: Box<NestedIterator0>,
-}
-pub fn nested_iterator_c1(
-    _ctx: &Ctx,
-    identifier: Identifier,
-    path: Path,
-    fields: Attribute1,
-    iterators: NestedIterator0,
-) -> NestedIterator {
-    NestedIterator {
-        identifier,
-        path,
-        fields,
-        iterators: Box::new(iterators),
-    }
 }
 #[derive(Debug, Clone)]
 pub struct Attribute {

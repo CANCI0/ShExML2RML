@@ -81,7 +81,9 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                 self.visit_shape(decl, &o);
             }
         }
-        println!("{:#?}", self.iterators_for_expression);
+
+        print!("IDES: {:#?}", self.ids_for_logical_sources);
+
         None
     }
 
@@ -134,6 +136,8 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             Some(it) => it.clone(),
             None => return None,
         };
+
+        println!("Shape: {}.{}, Iterators: {:#?}", path, attr, iterators);
 
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
@@ -200,7 +204,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
         let logical_source = LogicalSource::new(
             iterator.path.clone(),
-            match iterator.path_type.as_str() {
+            match iterator.path_type.clone()?.as_str() {
                 "xpath:" => ReferenceFormulation::XPath,
                 "jsonpath:" => ReferenceFormulation::JSONPath,
                 _ => return None,
@@ -210,17 +214,22 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
         self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source.clone());
 
-        if let Some(nested_iterators) = &iterator.iterators {
+        if let Some(nested_iterators) = &iterator.iterators.as_ref() {
             for nested_iterator in nested_iterators {
-                let nested_path = format!("{}{}", iterator.path, nested_iterator.path);
+                let separator = match iterator.path_type.clone()?.as_str() {
+                    "xpath:" => "/",
+                    "jsonpath:" => ".",
+                    _ => "",
+                };
+                let nested_path = format!("{}{}{}", iterator.path, separator, nested_iterator.path);
 
-                let ls = LogicalSource::new(
-                    format!("{}{}", iterator.path.clone(), nested_iterator.path),
+                let nested_ls = LogicalSource::new(
+                    nested_path.clone(),
                     logical_source.reference_formulation.clone(),
                     file.path.clone(),
                 );
 
-                self.ids_for_logical_sources.insert(nested_path, ls);
+                self.ids_for_logical_sources.insert(nested_iterator.identifier.clone(), nested_ls);
             }
         }
 
@@ -230,10 +239,12 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                 .or_insert_with(Vec::new)
                 .push(iterator.clone());
 
-            if let Some(nested_iterators) = &iterator.iterators {
+            if let Some(nested_iterators) = &iterator.iterators.as_ref() {
                 for nested_iterator in nested_iterators {
+                    let nested_key = format!("{}.{}", identifier, nested_iterator.identifier);
+
                     self.iterators_for_expression
-                        .entry(format!("{}.{}", identifier.clone(), nested_iterator.identifier))
+                        .entry(nested_key)
                         .or_insert_with(Vec::new)
                         .push(nested_iterator.clone());
                 }
@@ -242,4 +253,5 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
         None
     }
+
 }
