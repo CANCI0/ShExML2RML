@@ -16,7 +16,7 @@ mod integration_test {
     fn test_iterators_single_expression() {
         let parser = ShexmlParser::new();
         let input = read_test_file("single_iterator_single_expression.shexml");
-        let expected = fs::read_to_string("./outputs/single_iterator_single_expression.ttl")
+        let expected = fs::read_to_string("./outputs/single_iterator_single_expression_expected.ttl")
             .expect("Failed to read path")
             .replace("\r", "");
 
