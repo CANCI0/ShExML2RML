@@ -14,7 +14,3 @@ rustemo-compiler = "0.7.0"
 
 [build-dependencies]
 rustemo-compiler = "0.7.0"
-
-[profile.dev]
-debug = false
-
