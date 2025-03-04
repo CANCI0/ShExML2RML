@@ -1,4 +1,4 @@
-use crate::parser::shexml_actions::*;
+use crate::parser::shexml_actions::{Iterator as Iterator_, *};
 
 pub trait Visitor<T>
 where

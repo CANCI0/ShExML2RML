@@ -1,14 +1,16 @@
-use crate::parser::shexml_actions::*;
+use crate::parser::shexml_actions::{*, Iterator as Iterator_};
 use crate::serializer::visitor::abstract_visitor::Visitor;
 use crate::serializer::rml_classes::*;
 use std::any::Any;
 use std::collections::HashMap;
+use std::iter::Iterator;
 
 pub struct TranspileVisitor {
     pub rml_code: Vec<RmlNode>,
     pub prefixes: HashMap<String, Prefix>,
     pub sources: HashMap<String, Source>,
     pub iterators: HashMap<String, Iterator_>,
+    pub shapes: HashMap<String, Shape>,
     pub iterators_for_expression: HashMap<String, Vec<Iterator_>>,
     pub sources_for_iterator: HashMap<String, Vec<Source>>,
     pub ids_for_logical_sources: HashMap<String, LogicalSource>,
@@ -21,6 +23,7 @@ impl TranspileVisitor {
             prefixes: HashMap::new(),
             sources: HashMap::new(),
             iterators: HashMap::new(),
+            shapes: Default::default(),
             iterators_for_expression: HashMap::new(),
             sources_for_iterator: Default::default(),
             ids_for_logical_sources: HashMap::new(),
@@ -47,6 +50,40 @@ impl TranspileVisitor {
 }
 
 impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
+
+    fn visit_shexml(&mut self, n: &Shexml, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+        if let Some(prefixes) = &n.prefixes {
+            for decl in prefixes {
+                self.visit_prefix(decl, &o);
+            }
+        }
+        if let Some(sources) = &n.sources {
+            for decl in sources {
+                self.visit_source(decl, &o);
+            }
+        }
+        if let Some(iterators) = &n.iterators {
+            for decl in iterators {
+                self.visit_iterator(decl, &o);
+            }
+        }
+        if let Some(expressions) = &n.expressions {
+            for decl in expressions {
+                self.visit_expression(decl, &o);
+            }
+        }
+        if let Some(shapes) = &n.shapes {
+            for shape in shapes {
+                self.shapes.insert(format!("{}{}", shape.subject.class.namespace, shape.subject.class.identifier), shape.clone());
+            }
+
+            for decl in shapes {
+                self.visit_shape(decl, &o);
+            }
+        }
+        println!("{:#?}", self.iterators_for_expression);
+        None
+    }
 
     fn visit_prefix(&mut self, n: &Prefix, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.prefixes.insert(n.identifier.clone(), n.clone());
@@ -76,13 +113,22 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
     fn visit_iterator(&mut self, n: &Iterator_, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.iterators.insert(n.identifier.clone(), n.clone());
+
         None
     }
 
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let subject_generator = &n.subject.subject_identifier.subject_generator.as_str();
-        let path = subject_generator.split('.').nth(0).unwrap_or("");
-        let attr = subject_generator.split('.').nth(1).unwrap_or("");
+
+        let path;
+        let attr;
+
+        if let Some(pos) = subject_generator.rfind('.') {
+            path = &subject_generator[..pos];
+            attr = &subject_generator[pos + 1..];
+        } else {
+            panic!("Error parsing '{}{}' shape. Incorrect path syntax: {}", n.subject.class.namespace, n.subject.class.identifier, subject_generator);
+        }
 
         let iterators = match self.iterators_for_expression.get(path) {
             Some(it) => it.clone(),
@@ -134,8 +180,14 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                 None
             )
 
+        } else if let Object::Reference(_) = &p.object {
+            ObjectMap::new(
+                None,
+                None,
+                None
+            )
         } else {
-            return None;
+            panic!()
         };
 
         let predicate = PredicateMap::new(format!("{}{}", p.predicate.namespace, p.predicate.identifier));
@@ -156,16 +208,38 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             file.path.clone(),
         );
 
-        self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source);
+        self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source.clone());
+
+        if let Some(nested_iterators) = &iterator.iterators {
+            for nested_iterator in nested_iterators {
+                let nested_path = format!("{}{}", iterator.path, nested_iterator.path);
+
+                let ls = LogicalSource::new(
+                    format!("{}{}", iterator.path.clone(), nested_iterator.path),
+                    logical_source.reference_formulation.clone(),
+                    file.path.clone(),
+                );
+
+                self.ids_for_logical_sources.insert(nested_path, ls);
+            }
+        }
 
         if let Some(identifier) = o.as_ref().and_then(|b| b.downcast_ref::<String>()) {
             self.iterators_for_expression
                 .entry(identifier.clone())
                 .or_insert_with(Vec::new)
                 .push(iterator.clone());
+
+            if let Some(nested_iterators) = &iterator.iterators {
+                for nested_iterator in nested_iterators {
+                    self.iterators_for_expression
+                        .entry(format!("{}.{}", identifier.clone(), nested_iterator.identifier))
+                        .or_insert_with(Vec::new)
+                        .push(nested_iterator.clone());
+                }
+            }
         }
 
         None
     }
-
 }

@@ -76,7 +76,7 @@ DataValue:
     ;
 
 Reference:
-    "@" ":" identifier=Identifier
+    "@" namespace=Namespace identifier=Identifier
     ;
 
 terminals
