@@ -20,6 +20,15 @@ ITERATOR film_xml <xpath: //film> {
     }
 }
 
+ITERATOR film_json <jsonpath: $.films[*]> {
+    FIELD id <id>
+    FIELD name <name>
+    ITERATOR actors <cast[*]> {
+        FIELD name <name>
+        FIELD role <role>
+    }
+}
+
 EXPRESSION films <films_xml_file.film_xml UNION films_json_file.film_json>
 
 :Films :[films.id] {
