@@ -7,6 +7,8 @@ use std::iter::Iterator;
 
 pub struct TranspileVisitor {
     pub rml_code: Vec<RmlNode>,
+    pub result_prefixes: Vec<NamespacePrefix>,
+    pub result_triple_maps: Vec<TriplesMap>,
     pub prefixes: HashMap<String, Prefix>,
     pub sources: HashMap<String, Source>,
     pub iterators: HashMap<String, Iterator_>,
@@ -20,6 +22,8 @@ impl TranspileVisitor {
     pub fn new() -> Self {
         let mut v = Self {
             rml_code: vec![],
+            result_prefixes: vec![],
+            result_triple_maps: vec![],
             prefixes: HashMap::new(),
             sources: HashMap::new(),
             iterators: HashMap::new(),
@@ -38,11 +42,9 @@ impl TranspileVisitor {
         ];
 
         for (id, uri) in namespaces {
-            v.rml_code.push(RmlNode::NamespacePrefix {
-                0: NamespacePrefix {
-                    identifier: id.to_string(),
-                    uri: uri.to_string(),
-                },
+            v.result_prefixes.push(NamespacePrefix {
+                identifier: String::from(id),
+                uri: String::from(uri),
             });
         }
         v
@@ -89,11 +91,9 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
     fn visit_prefix(&mut self, n: &Prefix, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         self.prefixes.insert(n.identifier.clone(), n.clone());
-        self.rml_code.push(RmlNode::NamespacePrefix {
-            0: NamespacePrefix {
-                identifier: n.identifier.clone(),
-                uri: n.uri.clone(),
-            },
+        self.result_prefixes.push(NamespacePrefix {
+            identifier: String::from(&n.identifier),
+            uri: String::from(&n.uri),
         });
         None
     }
@@ -135,7 +135,6 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             None => return None,
         };
 
-        println!("Path: {} Attr: {}, Iterators: {:#?}", path, attr, iterators);
 
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
@@ -156,7 +155,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                         }
                     }
                 }
-                self.rml_code.push(RmlNode::TriplesMap(triples_map));
+                self.result_triple_maps.push(triples_map);
             }
         }
         None

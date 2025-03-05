@@ -13,11 +13,20 @@ pub fn transpile_file(input: &str, output: Option<&str>) {
             let mut visitor = TranspileVisitor::new();
             visitor.visit_shexml(&ast, &None);
 
-            let result_str = visitor.rml_code
+            let prefixes = visitor.result_prefixes
                 .iter()
                 .map(|node| node.to_string())
                 .collect::<Vec<String>>()
                 .join("\n");
+
+            let triple_maps = visitor.result_triple_maps
+                .iter()
+                .map(|node| node.to_string())
+                .collect::<Vec<String>>()
+                .join("\n");
+
+            let result_str = format!("{}\n{}", prefixes, triple_maps);
+
             match output {
                 Some(out_path) => {
                     if let Err(err) = fs::write(out_path, &result_str) {
@@ -32,3 +41,4 @@ pub fn transpile_file(input: &str, output: Option<&str>) {
         Err(err) => eprintln!("Error reading input file: {}", err),
     }
 }
+
