@@ -137,7 +137,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
 
         for iterator in iterators {
-            if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.identifier) {
+            if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.path) {
                 let prefix = n.subject.subject_identifier.prefix.as_deref().unwrap_or("");
                 let prefix_uri = self.prefixes.get(prefix).map(|p| &p.uri).map_or("", |v| v);
 
@@ -215,7 +215,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             file.path.clone(),
         );
 
-        self.ids_for_logical_sources.insert(iterator.identifier.clone(), logical_source.clone());
+        self.ids_for_logical_sources.insert(iterator.path.clone(), logical_source.clone());
 
         if let Some(nested_iterators) = &iterator.iterators.as_ref() {
             for nested_iterator in nested_iterators {
@@ -232,7 +232,7 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                     file.path.clone(),
                 );
 
-                self.ids_for_logical_sources.insert(nested_iterator.identifier.clone(), nested_ls);
+                self.ids_for_logical_sources.insert(nested_iterator.path.clone(), nested_ls);
             }
         }
 

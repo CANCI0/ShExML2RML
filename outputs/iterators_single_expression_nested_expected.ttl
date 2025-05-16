@@ -1,11 +1,11 @@
-@prefix rr:    <http://www.w3.org/ns/r2rml#> .
-@prefix d2rq:  <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
-@prefix dbr:   <http://dbpedia.org/resource/> .
-@prefix ql:    <http://semweb.mmlab.be/ns/ql#> .
-@prefix map:   <http://mapping.example.com/> .
-@prefix :      <http://example.com/> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix map: <http://mapping.example.com/> .
+@prefix : <http://example.com/> .
+@prefix dbr: <http://dbpedia.org/resource/> .
 @prefix schema: <http://schema.org/> .
-@prefix rml:   <http://semweb.mmlab.be/ns/rml#> .
 
 map:m_1  a rr:TriplesMap ;
     rml:logicalSource      map:ls_1 ;
@@ -67,6 +67,7 @@ map:po_5  a              rr:PredicateObjectMap ;
 map:o_5  a          rr:ObjectMap ;
         rr:template  "http://dbpedia.org/resource/{crew//screenwritter}" ;
         rr:termType  rr:IRI .
+
 map:p_5  a           rr:predicateMap ;
         rr:constant  :screenwritter .
 map:po_6  a              rr:PredicateObjectMap ;
@@ -93,8 +94,7 @@ map:po_8  a              rr:PredicateObjectMap ;
         rr:objectMap     map:o_8 ;
         rr:predicateMap  map:p_8 .
 
-map:o_8  a          rr:ObjectMap ;
-        rr:parentTriplesMap  map:m_1 .
+map:o_8  a          rr:ObjectMap .
 
 map:p_8  a           rr:predicateMap ;
         rr:constant  schema:actor .
@@ -102,8 +102,8 @@ map:po_9  a              rr:PredicateObjectMap ;
         rr:objectMap     map:o_9 ;
         rr:predicateMap  map:p_9 .
 
-map:o_9  a          rr:ObjectMap ;
-        rr:parentTriplesMap  map:m_3 .
+map:o_9  a          rr:ObjectMap .
+        rr:parentTriplesMap  map:m_2 .
 
 map:p_9  a           rr:predicateMap ;
         rr:constant  schema:actor .
@@ -169,6 +169,7 @@ map:po_14  a              rr:PredicateObjectMap ;
 map:o_14  a          rr:ObjectMap ;
         rr:template  "http://dbpedia.org/resource/{crew.screenwritter}" ;
         rr:termType  rr:IRI .
+
 map:p_14  a           rr:predicateMap ;
         rr:constant  :screenwritter .
 map:po_15  a              rr:PredicateObjectMap ;
@@ -195,8 +196,7 @@ map:po_17  a              rr:PredicateObjectMap ;
         rr:objectMap     map:o_17 ;
         rr:predicateMap  map:p_17 .
 
-map:o_17  a          rr:ObjectMap ;
-        rr:parentTriplesMap  map:m_2 .
+map:o_17  a          rr:ObjectMap .
 
 map:p_17  a           rr:predicateMap ;
         rr:constant  schema:actor .
@@ -216,9 +216,9 @@ map:m_3  a rr:TriplesMap ;
     rr:subjectMap          map:s_3 .
 
 map:ls_5  a                rml:LogicalSource ;
-        rml:iterator              "$.films[*].cast[*]" ;
+        rml:iterator              "//film/cast/actor" ;
         rml:referenceFormulation  ql:JSONPath ;
-        rml:source                "https://shexml.herminiogarcia.com/files/films.json" .
+        rml:source                "https://shexml.herminiogarcia.com/files/films.xml" .
 
 map:s_3  a           rr:SubjectMap ;
         rr:template  "http://dbpedia.org/resource/{name}" .
@@ -241,7 +241,7 @@ map:o_20  a          rr:ObjectMap ;
         rr:template  "http://example.com/{../../@id}" ;
         rr:termType  rr:IRI .
 
-map:p_17  a          rr:predicateMap ;
+map:p_20  a           rr:predicateMap ;
         rr:constant  :appear_on .
 
 
