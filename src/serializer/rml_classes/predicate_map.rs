@@ -22,8 +22,11 @@ impl PredicateMap {
         }
     }
 
-    pub fn set_id(&mut self, id: String) {
-        self.id = id;
+    pub fn with_id(id: String, constant: String) -> PredicateMap {
+        PredicateMap {
+            id,
+            constant
+        }
     }
 }
 

@@ -8,7 +8,8 @@ mod unit_tests {
 
     #[test]
     fn test_logical_source_display() {
-        let input = LogicalSource::new(
+        let input = LogicalSource::with_id(
+            String::from("ls_1"),
             String::from("//film/cast/actress"),
             ReferenceFormulation::XPath,
             String::from("https://shexml.herminiogarcia.com/files/films.xml"),
@@ -26,7 +27,8 @@ mod unit_tests {
 
     #[test]
     fn test_object_map_display_template() {
-        let input = ObjectMap::new(
+        let input = ObjectMap::with_id(
+            String::from("o_1"),
             Some(String::from("http://dbpedia.org/resource/{year}")),
             Some(TermType::IRI),
             None,
@@ -43,8 +45,10 @@ mod unit_tests {
 
     #[test]
     fn test_predicate_map_display() {
-        let mut input = PredicateMap::new(String::from(":year"));
-        input.set_id(String::from("p_2"));
+        let input = PredicateMap::with_id(
+            String::from("p_2"),
+            String::from(":year")
+        );
 
         let expected_output = indoc! {"
             map:p_2  a           rr:predicateMap ;
@@ -55,19 +59,24 @@ mod unit_tests {
 
     #[test]
     fn test_predicate_object_map_display() {
-        let input = PredicateObjectMap::new(
-            ObjectMap::new(
+        let input = PredicateObjectMap::with_id(
+            String::from("po_1"),
+            ObjectMap::with_id(
+                String::from("o_1"),
                 Some(String::from("http://dbpedia.org/resource/{year}")),
                 None,
                 None,
             ),
-            PredicateMap::new(String::from("schema:name")),
+            PredicateMap::with_id(
+                String::from("p_1"),
+                String::from("schema:name"),
+            ),
         );
 
         let expected_output = indoc! {"
             map:po_1  a              rr:PredicateObjectMap ;
-                    rr:objectMap     map:o_2 ;
-                    rr:predicateMap  map:p_2 .
+                    rr:objectMap     map:o_1 ;
+                    rr:predicateMap  map:p_1 .
 
             map:o_1  a          rr:ObjectMap ;
                     rr:template  \"http://dbpedia.org/resource/{year}\" .
@@ -124,7 +133,10 @@ mod unit_tests {
 
     #[test]
     fn test_subject_map_display() {
-        let input = SubjectMap::new(String::from("http://example.com/{id}"));
+        let input = SubjectMap::with_id(
+            String::from("s_1"),
+            String::from("http://example.com/{id}"),
+        );
 
         let expected_output = indoc! {"
             map:s_1  a           rr:SubjectMap ;
