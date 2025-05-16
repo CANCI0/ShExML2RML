@@ -43,10 +43,11 @@ mod unit_tests {
 
     #[test]
     fn test_predicate_map_display() {
-        let input = PredicateMap::new(String::from(":year"));
+        let mut input = PredicateMap::new(String::from(":year"));
+        input.set_id(String::from("p_2"));
 
         let expected_output = indoc! {"
-            map:p_1  a           rr:predicateMap ;
+            map:p_2  a           rr:predicateMap ;
                     rr:constant  :year ."};
 
         assert_eq!(format!("{}", input), expected_output);
@@ -68,10 +69,10 @@ mod unit_tests {
                     rr:objectMap     map:o_2 ;
                     rr:predicateMap  map:p_2 .
 
-            map:o_2  a          rr:ObjectMap ;
+            map:o_1  a          rr:ObjectMap ;
                     rr:template  \"http://dbpedia.org/resource/{year}\" .
 
-            map:p_2  a           rr:predicateMap ;
+            map:p_1  a           rr:predicateMap ;
                     rr:constant  schema:name .
         "};
 

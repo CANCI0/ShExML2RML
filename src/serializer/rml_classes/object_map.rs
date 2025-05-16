@@ -14,10 +14,36 @@ pub struct ObjectMap {
 }
 
 impl ObjectMap {
-    pub fn new(template: Option<String>, term_type: Option<TermType>, parent_triples_map: Option<TriplesMap>) -> ObjectMap {
+    /// Creates a new ObjectMap with an optional ID
+    ///
+    /// # Arguments
+    ///
+    /// * `template` - Optional template string
+    /// * `term_type` - Optional term type
+    /// * `parent_triples_map` - Optional parent triples map
+    /// * `id` - Optional ID, will be auto-generated if None
+    pub fn new(
+        template: Option<String>, 
+        term_type: Option<TermType>, 
+        parent_triples_map: Option<TriplesMap>,
+    ) -> ObjectMap {
         let id_number = COUNTER.fetch_add(1, Ordering::Relaxed);
         let id = format!("o_{}", id_number);
 
+        ObjectMap{
+            id,
+            template,
+            term_type,
+            parent_triples_map
+        }
+    }
+
+    pub fn with_id(
+        id: String,
+        template: Option<String>, 
+        term_type: Option<TermType>, 
+        parent_triples_map: Option<TriplesMap>,
+    ) -> ObjectMap {
         ObjectMap{
             id,
             template,

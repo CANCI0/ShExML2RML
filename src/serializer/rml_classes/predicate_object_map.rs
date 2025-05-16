@@ -24,6 +24,14 @@ impl PredicateObjectMap {
             predicate_map,
         }
     }
+
+    pub fn with_id(id: String, object_map: ObjectMap, predicate_map: PredicateMap) -> Self {
+        PredicateObjectMap{
+            id,
+            object_map,
+            predicate_map,
+        }
+    }
 }
 
 impl fmt::Display for PredicateObjectMap {

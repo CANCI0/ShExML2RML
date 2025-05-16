@@ -21,6 +21,13 @@ impl SubjectMap {
             template,
         }
     }
+
+    pub fn with_id(id : String, template: String) -> SubjectMap {
+        SubjectMap{
+            id,
+            template,
+        }
+    }
 }
 
 impl fmt::Display for SubjectMap {

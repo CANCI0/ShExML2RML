@@ -27,6 +27,15 @@ impl LogicalSource {
             source,
         }
     }
+
+    pub fn with_id(id: String, iterator: String, reference_formulation: ReferenceFormulation, source: String) -> Self {
+        LogicalSource {
+            id,
+            iterator,
+            reference_formulation,
+            source,
+        }
+    }
 }
 
 

@@ -21,6 +21,10 @@ impl PredicateMap {
             constant
         }
     }
+
+    pub fn set_id(&mut self, id: String) {
+        self.id = id;
+    }
 }
 
 impl fmt::Display for PredicateMap {

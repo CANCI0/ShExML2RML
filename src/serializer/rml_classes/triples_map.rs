@@ -26,6 +26,15 @@ impl TriplesMap {
             predicate_object_maps,
         }
     }
+
+    pub fn with_id(id : String, logical_source: LogicalSource, subject_map: SubjectMap, predicate_object_maps: Vec<PredicateObjectMap>) -> TriplesMap {
+        TriplesMap {
+            id,
+            logical_source,
+            subject_map,
+            predicate_object_maps,
+        }
+    }
 }
 
 impl fmt::Display for TriplesMap {
