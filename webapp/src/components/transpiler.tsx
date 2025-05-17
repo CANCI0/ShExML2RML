@@ -7,7 +7,6 @@ import { Badge } from "./ui/badge"
 import { Tooltip, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import { useToast } from "../hooks/use-toast"
 
-// Iconos
 const ArrowRight = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -44,21 +43,28 @@ const Copy = () => (
   </svg>
 )
 
-const RotateCw = () => (
-  <svg
+const RotateFerris = (width: number = 64, height: number = 64) => (
+    <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="mr-2 h-4 w-4 animate-spin"
+    width={width}
+    height={height}
+    viewBox="0 0 64 64"
+    className="mr-2 h-8 w-8 animate-spin"
   >
-    <path d="M21 2v6h-6"></path>
-    <path d="M21 13a9 9 0 1 1-3-7.7L21 8"></path>
+    <image
+      href="./ferris.svg"
+      width={width}
+      height={height}
+      preserveAspectRatio="xMidYMid meet"
+    />
+    <circle cx="50" cy="14" r="3" fill="#fff" opacity="0.6">
+      <animate 
+        attributeName="cy" 
+        values="14;6;14" 
+        dur="1.5s" 
+        repeatCount="indefinite"
+      />
+    </circle>
   </svg>
 )
 
@@ -118,6 +124,34 @@ const Info = () => (
     <path d="M12 8h.01"></path>
   </svg>
 )
+
+const showGiantFerris = () => {
+  const ferris = document.createElement("img")
+  ferris.src = "./ferris.svg"
+  ferris.style.position = "fixed"
+  ferris.style.top = "50%"
+  ferris.style.left = "50%"
+  ferris.style.transform = "translate(-50%, -50%)"
+  ferris.style.width = "100vmin"
+  ferris.style.height = "100vmin"
+  ferris.style.animation = "girar 1s linear infinite"
+  ferris.style.zIndex = "9999"
+  document.body.appendChild(ferris)
+
+  const style = document.createElement('style')
+  style.textContent = `
+    @keyframes girar {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+  `
+  document.head.appendChild(style)
+
+  setTimeout(() => {
+    document.body.removeChild(ferris)
+    document.head.removeChild(style)
+  }, 5000)
+}
 
 const EXAMPLES = {
   basic: `PREFIX : <http://example.com/>
@@ -581,7 +615,7 @@ map:p_23  a           rr:predicateMap ;
     <div className="container mx-auto px-4 py-8 h-dvh">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">ShExML to RML</h1>
+          <h1 onClick={showGiantFerris} className="text-4xl font-bold tracking-tight">ShExML to RML</h1>
           <p className="text-muted-foreground mt-2 leading-4.5">Transform ShExML mappings to RML with this modern, Rust-based transpiler</p>
         </div>
         <div className="flex items-center gap-4">
@@ -689,7 +723,7 @@ map:p_23  a           rr:predicateMap ;
             <Button onClick={convertToRML} disabled={!shexmlCode || isConverting} className="px-6" size="lg">
               {isConverting ? (
                 <>
-                  <RotateCw />
+                  {RotateFerris(64, 64)}
                   Converting...
                 </>
               ) : (
@@ -769,7 +803,7 @@ map:p_23  a           rr:predicateMap ;
           documentation.
         </p>
         <p className="mt-2 text-primary leading-4.5">
-          © Developed by <a href="https://github.com/canci0" target="_blank" rel="noopener noreferrer">Martín Cancio Barrera</a>
+          © {new Date().getFullYear()}, Developed by <a href="https://github.com/canci0" target="_blank" rel="noopener noreferrer">Martín Cancio Barrera</a>
         </p>
       </footer>
     </div>
