@@ -1,7 +1,7 @@
 use std::fs;
 use rustemo::Parser;
-use shexml2rml::parser::shexml::ShexmlParser;
-use shexml2rml::serializer::visitor::{TranspileVisitor, Visitor};
+use crate::parser::shexml::ShexmlParser;
+use crate::serializer::visitor::{TranspileVisitor, Visitor};
 
 pub fn transpile_file(input: &str, output: Option<&str>) {
     let parser = ShexmlParser::new();

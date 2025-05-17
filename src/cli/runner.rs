@@ -1,6 +1,6 @@
 use clap::Parser;
+use shexml2rml::core::core::transpile_file;
 use crate::cli::args::CliArgs;
-use crate::cli::commands::transpile_file;
 
 pub fn run() {
     let args = CliArgs::parse();
