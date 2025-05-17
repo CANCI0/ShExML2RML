@@ -1,5 +1,5 @@
 use clap::Parser;
-use shexml2rml::core::core::transpile_file;
+use shexml2rml::core::transpile_file;
 use crate::cli::args::CliArgs;
 
 pub fn run() {
