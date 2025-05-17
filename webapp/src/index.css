@@ -50,7 +50,7 @@
   --popover: rgb(255 255 255);
   --popover-foreground: rgb(23 23 23);
   --primary: rgb(206, 65, 43);
-  --primary-foreground: rgb(250 250 250);
+  --primary-foreground: rgb(220 220 220);
   --secondary: rgb(245 245 245);
   --secondary-foreground: rgb(38 38 38);
   --muted: rgb(245 245 245);
@@ -66,10 +66,10 @@
   --chart-3: rgb(99 102 241);
   --chart-4: rgb(34 197 94);
   --chart-5: rgb(234 179 8);
-  --sidebar: rgb(250 250 250);
+  --sidebar: rgb(220 220 220);
   --sidebar-foreground: rgb(23 23 23);
   --sidebar-primary: rgb(38 38 38);
-  --sidebar-primary-foreground: rgb(250 250 250);
+  --sidebar-primary-foreground: rgb(220 220 220);
   --sidebar-accent: rgb(245 245 245);
   --sidebar-accent-foreground: rgb(38 38 38);
   --sidebar-border: rgb(229 229 229);
@@ -78,19 +78,19 @@
 
 .dark {
   --background: rgb(23 23 23);
-  --foreground: rgb(250 250 250);
+  --foreground: rgb(255, 115, 90);
   --card: rgb(38 38 38);
-  --card-foreground: rgb(250 250 250);
+  --card-foreground: rgb(220 220 220);
   --popover: rgb(38 38 38);
-  --popover-foreground: rgb(250 250 250);
-  --primary: rgb(229 229 229);
+  --popover-foreground: rgb(220 220 220);
+  --primary: rgb(255, 115, 90);
   --primary-foreground: rgb(38 38 38);
   --secondary: rgb(64 64 64);
-  --secondary-foreground: rgb(250 250 250);
+  --secondary-foreground: rgb(220 220 220);
   --muted: rgb(64 64 64);
   --muted-foreground: rgb(163 163 163);
   --accent: rgb(64 64 64);
-  --accent-foreground: rgb(250 250 250);
+  --accent-foreground: rgb(220 220 220);
   --destructive: rgb(239 68 68);
   --border: rgb(255 255 255 / 0.1);
   --input: rgb(255 255 255 / 0.15);
@@ -101,11 +101,11 @@
   --chart-4: rgb(139 92 246);
   --chart-5: rgb(249 115 22);
   --sidebar: rgb(38 38 38);
-  --sidebar-foreground: rgb(250 250 250);
+  --sidebar-foreground: rgb(220 220 220);
   --sidebar-primary: rgb(129 140 248);
-  --sidebar-primary-foreground: rgb(250 250 250);
+  --sidebar-primary-foreground: rgb(220 220 220);
   --sidebar-accent: rgb(64 64 64);
-  --sidebar-accent-foreground: rgb(250 250 250);
+  --sidebar-accent-foreground: rgb(220 220 220);
   --sidebar-border: rgb(255 255 255 / 0.1);
   --sidebar-ring: rgb(115 115 115);
 }

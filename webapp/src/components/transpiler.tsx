@@ -582,7 +582,7 @@ map:p_23  a           rr:predicateMap ;
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">ShExML to RML</h1>
-          <p className="text-muted-foreground mt-2">Transform ShExML mappings to RML with this modern, Rust-based transpiler</p>
+          <p className="text-muted-foreground mt-2 leading-4.5">Transform ShExML mappings to RML with this modern, Rust-based transpiler</p>
         </div>
         <div className="flex items-center gap-4">
           <TooltipProvider>
@@ -764,11 +764,11 @@ map:p_23  a           rr:predicateMap ;
       </Tabs>
 
       <footer className="mt-16 pt-8 border-t text-center text-muted-foreground text-sm">
-        <p>
+        <p className="leading-4.5">
           This transpiler is for demonstration purposes. For production use, please refer to official ShExML and RML
           documentation.
         </p>
-        <p className="mt-2 text-primary">
+        <p className="mt-2 text-primary leading-4.5">
           © Developed by <a href="https://github.com/canci0" target="_blank" rel="noopener noreferrer">Martín Cancio Barrera</a>
         </p>
       </footer>
