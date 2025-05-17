@@ -615,7 +615,11 @@ map:p_23  a           rr:predicateMap ;
     <div className="container mx-auto px-4 py-8 h-dvh">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 onClick={showGiantFerris} className="text-4xl font-bold tracking-tight">ShExML to RML</h1>
+          <TooltipProvider>
+            <Tooltip content="Click me!" side="bottom">        
+              <h1 onClick={showGiantFerris} className="text-4xl font-bold tracking-tight">ShExML to RML</h1>
+            </Tooltip>
+          </TooltipProvider>
           <p className="text-muted-foreground mt-2 leading-4.5">Transform ShExML mappings to RML with this modern, Rust-based transpiler</p>
         </div>
         <div className="flex items-center gap-4">
