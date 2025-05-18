@@ -84,8 +84,6 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             }
         }
 
-        print!("IDES: {:#?}", self.ids_for_logical_sources);
-
         None
     }
 
