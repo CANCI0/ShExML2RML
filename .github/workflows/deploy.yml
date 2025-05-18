@@ -1,0 +1,40 @@
+name: Build and Deploy to Azure VM
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t shexml2rml:latest .
+
+      - name: Save Docker image as tar
+        run: docker save shexml2rml:latest -o shexml2rml.tar
+
+      - name: Copy Docker image to Azure VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          source: "shexml2rml.tar"
+          target: "~/"
+
+      - name: Load and run Docker image on Azure VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          script: |
+            docker load -i ~/shexml2rml.tar
+            docker stop shexml2rml || true
+            docker rm shexml2rml || true
+            docker run -d --name shexml2rml -p 80:80 -p 8080:8080 shexml2rml:latest
