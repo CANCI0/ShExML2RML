@@ -18,6 +18,9 @@ jobs:
       - name: Save Docker image as tar
         run: docker save shexml2rml:latest -o shexml2rml.tar
 
+      - name: Fix permissions for Docker image tar
+        run: sudo chmod 644 shexml2rml.tar
+
       - name: Copy Docker image to Azure VM
         uses: appleboy/scp-action@v0.1.7
         with:
