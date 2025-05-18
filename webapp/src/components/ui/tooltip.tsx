@@ -51,7 +51,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, content, side = "top", alig
 const TooltipTrigger: React.FC<{
   children: React.ReactNode
   asChild?: boolean
-}> = ({ children, asChild }) => {
+}> = ({ children }) => {
   return <>{children}</>
 }
 

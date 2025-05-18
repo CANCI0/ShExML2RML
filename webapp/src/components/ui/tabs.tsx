@@ -3,6 +3,27 @@
 import React from "react"
 import { cn } from "../../lib/utils"
 
+interface TabsTriggerProps {
+  className?: string
+  children: React.ReactNode
+  value: string
+  setValue?: (value: string) => void
+  active?: boolean
+}
+
+interface TabsContentProps {
+  className?: string
+  children: React.ReactNode
+  value: string
+}
+
+interface TabsListProps {
+  className?: string
+  children: React.ReactNode
+  setValue?: (value: string) => void
+  value?: string
+}
+
 const Tabs = ({
   defaultValue,
   className,
@@ -15,22 +36,20 @@ const Tabs = ({
 }) => {
   const [value, setValue] = React.useState(defaultValue)
 
-  // Find all TabsTrigger and TabsContent children
   const triggers: React.ReactElement[] = []
   const contents: React.ReactElement[] = []
 
   React.Children.forEach(children, (child) => {
     if (React.isValidElement(child)) {
       if (child.type === TabsList) {
-        // Clone TabsList and pass setValue
-        const clonedTabsList = React.cloneElement(child, {
+        const clonedTabsList = React.cloneElement(child as React.ReactElement<TabsListProps>, {
           setValue,
           value,
         })
         triggers.push(clonedTabsList)
       } else if (child.type === TabsContent) {
-        // Only show content that matches current value
-        if (child.props.value === value) {
+        const childProps = child.props as TabsContentProps
+        if (childProps.value === value) {
           contents.push(child)
         }
       }
@@ -51,18 +70,13 @@ const TabsList = ({
   setValue,
   value,
   ...props
-}: {
-  className?: string
-  children: React.ReactNode
-  setValue?: (value: string) => void
-  value?: string
-}) => {
-  // Clone TabsTrigger children and pass setValue
+}: TabsListProps) => {
   const clonedChildren = React.Children.map(children, (child) => {
     if (React.isValidElement(child) && child.type === TabsTrigger) {
-      return React.cloneElement(child, {
+      const childProps = child.props as TabsTriggerProps
+      return React.cloneElement(child as React.ReactElement<TabsTriggerProps>, {
         setValue,
-        active: child.props.value === value,
+        active: childProps.value === value,
       })
     }
     return child
