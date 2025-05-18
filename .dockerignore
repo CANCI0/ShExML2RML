@@ -1,0 +1,13 @@
+# .dockerignore for Rust + Vite monorepo
+/target
+/node_modules
+/webapp/node_modules
+/webapp/dist
+*.log
+*.tmp
+*.swp
+.DS_Store
+.idea
+.vscode
+.git
+.gitignore
