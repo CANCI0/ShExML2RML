@@ -12,8 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t shexml2rml:latest .
+      - name: Build Docker image (production)
+        run: docker build --build-arg ENV_MODE=production -t shexml2rml:latest .
 
       - name: Save Docker image as tar
         run: docker save shexml2rml:latest -o shexml2rml.tar
