@@ -26,4 +26,4 @@ COPY --from=webapp-builder /webapp/dist /app/webapp
 # Expose port for API (default 8080) and web (default 4173 or 80)
 EXPOSE 8080 80
 # Entrypoint: run API (with --api) and serve static files
-CMD ["sh", "-c", "shexml2rml --api & npx serve -s /app/webapp -l 80"]
+CMD ["sh", "-c", "shexml2rml --api && npx serve -s /app/webapp -l 80"]

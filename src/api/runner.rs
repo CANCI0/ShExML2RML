@@ -1,4 +1,4 @@
-use actix_web::{post, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 use crate::core::core::transpile_content;
 
@@ -11,6 +11,11 @@ async fn transpile(req_body: String) -> impl Responder {
             HttpResponse::InternalServerError().body("There was an error porcessing the input")
         }
     }
+}
+
+#[get("/health")]
+async fn health_check() -> impl Responder {
+    HttpResponse::Ok().body("Server is running")
 }
 
 #[actix_web::main]
@@ -29,8 +34,8 @@ pub(crate) async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .service(transpile)
     })
-    .bind(("127.0.0.1", 8080))?;
+    .bind(("0.0.0.0", 8080))?;
 
-    println!("Servidor iniciado en http://127.0.0.1:8080");
+    println!("Servidor iniciado en http://0.0.0.0:8080");
     server.run().await
 }
