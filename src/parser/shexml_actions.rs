@@ -30,7 +30,7 @@ pub type Uri = String;
 pub fn uri(_ctx: &Ctx, token: Token) -> Uri {
     token.value.into()
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Shexml {
     pub prefixes: Prefix0,
     pub sources: Source0,
@@ -84,16 +84,16 @@ pub fn source0_source1(_ctx: &Ctx, source1: Source1) -> Source0 {
 pub fn source0_empty(_ctx: &Ctx) -> Source0 {
     None
 }
-pub type Iterator1 = Vec<Iterator_>;
+pub type Iterator1 = Vec<Iterator>;
 pub fn iterator1_c1(
     _ctx: &Ctx,
     mut iterator1: Iterator1,
-    iterator: Iterator_,
+    iterator: Iterator,
 ) -> Iterator1 {
     iterator1.push(iterator);
     iterator1
 }
-pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator_) -> Iterator1 {
+pub fn iterator1_iterator(_ctx: &Ctx, iterator: Iterator) -> Iterator1 {
     vec![iterator]
 }
 pub type Iterator0 = Option<Iterator1>;
@@ -137,7 +137,7 @@ pub fn shape0_shape1(_ctx: &Ctx, shape1: Shape1) -> Shape0 {
 pub fn shape0_empty(_ctx: &Ctx) -> Shape0 {
     None
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Prefix {
     pub identifier: Namespace,
     pub uri: Uri,
@@ -145,7 +145,7 @@ pub struct Prefix {
 pub fn prefix_c1(_ctx: &Ctx, identifier: Namespace, uri: Uri) -> Prefix {
     Prefix { identifier, uri }
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Source {
     pub identifier: Identifier,
     pub path: Uri,
@@ -153,7 +153,7 @@ pub struct Source {
 pub fn source_c1(_ctx: &Ctx, identifier: Identifier, path: Uri) -> Source {
     Source { identifier, path }
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Expression {
     pub identifier: Identifier,
     pub paths: IteratorFileRelation1,
@@ -180,7 +180,7 @@ pub fn iterator_file_relation1_iterator_file_relation(
 ) -> IteratorFileRelation1 {
     vec![iterator_file_relation]
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct IteratorFileRelation {
     pub file: Identifier,
     pub iterator: Identifier,
@@ -195,22 +195,39 @@ pub fn iterator_file_relation_c1(
         iterator,
     }
 }
-
+#[derive(Debug, Clone, PartialEq)]
+pub struct Iterator {
+    pub identifier: Identifier,
+    pub path_type: PathLiteralOpt,
+    pub path: Path,
+    pub fields: Attribute1,
+    pub iterators: Box<Iterator0>,
+}
 pub fn iterator_c1(
     _ctx: &Ctx,
     identifier: Identifier,
-    path_type: PathLiteral,
+    path_type: PathLiteralOpt,
     path: Path,
     fields: Attribute1,
-    iterators: NestedIterator0,
-) -> Iterator_ {
-    Iterator_ {
+    iterators: Iterator0,
+) -> Iterator {
+    Iterator {
         identifier,
         path_type,
         path,
         fields,
-        iterators,
+        iterators: Box::new(iterators),
     }
+}
+pub type PathLiteralOpt = Option<PathLiteral>;
+pub fn path_literal_opt_path_literal(
+    _ctx: &Ctx,
+    path_literal: PathLiteral,
+) -> PathLiteralOpt {
+    Some(path_literal)
+}
+pub fn path_literal_opt_empty(_ctx: &Ctx) -> PathLiteralOpt {
+    None
 }
 pub type Attribute1 = Vec<Attribute>;
 pub fn attribute1_c1(
@@ -223,64 +240,6 @@ pub fn attribute1_c1(
 }
 pub fn attribute1_attribute(_ctx: &Ctx, attribute: Attribute) -> Attribute1 {
     vec![attribute]
-}
-
-pub fn nested_iterator1_c1(
-    _ctx: &Ctx,
-    mut nested_iterator1: NestedIterator1,
-    nested_iterator: NestedIterator,
-) -> NestedIterator1 {
-    nested_iterator1.push(nested_iterator);
-    nested_iterator1
-}
-pub fn nested_iterator1_nested_iterator(
-    _ctx: &Ctx,
-    nested_iterator: NestedIterator,
-) -> NestedIterator1 {
-    vec![nested_iterator]
-}
-
-pub fn nested_iterator0_nested_iterator1(
-    _ctx: &Ctx,
-    nested_iterator1: NestedIterator1,
-) -> NestedIterator0 {
-    Some(nested_iterator1)
-}
-pub fn nested_iterator0_empty(_ctx: &Ctx) -> NestedIterator0 {
-    None
-}
-#[derive(Debug, Clone, PartialEq)]
-pub struct Iterator_ {
-    pub identifier: Identifier,
-    pub path_type: PathLiteral,
-    pub path: Path,
-    pub fields: Attribute1,
-    pub iterators: NestedIterator0,
-}
-#[derive(Debug, Clone, PartialEq)]
-pub struct NestedIterator {
-    pub identifier: Identifier,
-    pub path: Path,
-    pub fields: Attribute1,
-    pub iterators: Box<NestedIterator0>,
-}
-
-pub type NestedIterator0 = Option<NestedIterator1>;
-
-pub type NestedIterator1 = Vec<NestedIterator>;
-pub fn nested_iterator_c1(
-    _ctx: &Ctx,
-    identifier: Identifier,
-    path: Path,
-    fields: Attribute1,
-    iterators: NestedIterator0,
-) -> NestedIterator {
-    NestedIterator {
-        identifier,
-        path,
-        fields,
-        iterators: Box::new(iterators),
-    }
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct Attribute {
@@ -427,8 +386,13 @@ pub fn data_value_c1(
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct Reference {
+    pub namespace: Namespace,
     pub identifier: Identifier,
 }
-pub fn reference_c1(_ctx: &Ctx, identifier: Identifier) -> Reference {
-    Reference { identifier }
+pub fn reference_c1(
+    _ctx: &Ctx,
+    namespace: Namespace,
+    identifier: Identifier,
+) -> Reference {
+    Reference { namespace, identifier }
 }

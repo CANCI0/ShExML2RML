@@ -23,18 +23,10 @@ IteratorFileRelation:
     ;
 
 Iterator:
-    IteratorLiteral identifier=Identifier "<" path_type=PathLiteral path=Path ">"
+    IteratorLiteral identifier=Identifier "<" path_type=PathLiteral? path=Path ">"
     "{"
         fields=Attribute+
-        iterators=NestedIterator*
-    "}"
-    ;
-
-NestedIterator:
-    IteratorLiteral identifier=Identifier "<" path=Path ">"
-    "{"
-        fields=Attribute+
-        iterators=NestedIterator*
+        iterators=Iterator*
     "}"
     ;
 
@@ -76,7 +68,7 @@ DataValue:
     ;
 
 Reference:
-    "@" ":" identifier=Identifier
+    "@" namespace=Namespace identifier=Identifier
     ;
 
 terminals

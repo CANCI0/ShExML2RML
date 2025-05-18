@@ -5,6 +5,7 @@ use std::fmt::Formatter;
 pub enum ReferenceFormulation {
     XPath,
     JSONPath,
+    None,
 }
 
 impl fmt::Display for ReferenceFormulation {
@@ -12,6 +13,7 @@ impl fmt::Display for ReferenceFormulation {
         match self {
             ReferenceFormulation::XPath => write!(f, "XPath"),
             ReferenceFormulation::JSONPath => write!(f, "JSONPath"),
+            ReferenceFormulation::None => write!(f, ""),
         }
     }
 }
