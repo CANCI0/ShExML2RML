@@ -17,7 +17,7 @@ WORKDIR /webapp
 COPY webapp/package.json webapp/package-lock.json ./
 RUN npm install --legacy-peer-deps
 COPY webapp . 
-RUN npm run build
+RUN npm run build:prod
 
 # --- Final image ---
 FROM debian:stable-slim as final
