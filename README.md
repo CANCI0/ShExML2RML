@@ -14,27 +14,75 @@ ShExML2RML is a Rust-based transpiler that converts ShExML (Shape Expressions Ma
 
 ## 🔧Installation
 
-To build and install the transpiler, ensure you have Rust installed:
+You can install and run ShExML2RML in two ways: using Docker (recommended for easy setup) or building from source with Rust.
+
+### 📦 Using Docker (Recommended)
+
+The easiest way to get started is using Docker. This method includes both the CLI tool and a web interface.
+
+**Prerequisites:**
+- Docker and Docker Compose installed on your system
+
+**Build and run with Docker Compose:**
+
+```sh
+docker-compose up --build
+```
+
+This will:
+- Build the Rust CLI tool
+- Build the web application 
+- Start both services accessible at:
+  - **Web Interface**: http://localhost (port 80)
+  - **API**: http://localhost:8080
+
+**Using just Docker:**
+
+```sh
+docker build -t shexml2rml .
+docker run -p 8080:8080 -p 80:80 shexml2rml
+```
+
+### 🦀 Building from Source
+
+If you prefer to build from source or want to contribute to development:
+
+**Prerequisites:**
+- Rust toolchain installed (https://rustup.rs/)
+
+**Build the CLI tool:**
 
 ```sh
 cargo build --release
 ```
 
-Or install it directly with:
+**Install locally:**
 
 ```sh
 cargo install --path .
 ```
 
+The binary will be available as `shexml2rml` in your system PATH.
+
 ## 📋Usage
 
-Run the CLI tool to convert a `.shexml` file into an `.rml` file:
+ShExML2RML can be used in multiple ways depending on your needs:
 
+### 🌐 Web Interface (Easiest)
+
+If you're running with Docker, access the web interface at:
+- **http://localhost** (after running `docker-compose up --build`)
+
+The web interface provides an interactive ShExML editor and real-time transpilation to RML
+
+### 💻 Command Line Interface (CLI)
+
+**Basic usage:**
 ```sh
 shexml2rml input.shexml -m output.rml
 ```
 
-### 🛠️CLI Options
+**CLI Options:**
 
 ```sh
 shexml2rml --help
@@ -46,6 +94,37 @@ shexml2rml --help
 | `-m, --mapping`  | Specify output file for RML |
 | `-v, --version`  | Display version info        |
 | `-h, --help`     | Show help message           |
+
+**Examples:**
+```sh
+# Convert ShExML to RML with specific output file
+shexml2rml example.shexml -m result.rml
+
+# Convert ShExML to RML (output will be auto-generated)
+shexml2rml example.shexml
+
+# Check version
+shexml2rml --version
+```
+
+### 🔗 API Usage
+
+Start the API server:
+```sh
+shexml2rml --api
+```
+
+The API will be available at **http://localhost:8080** with the following endpoints:
+
+- **POST** `/transpile` - Convert ShExML content to RML
+- **GET** `/health` - Health check endpoint
+
+**Example API call:**
+```bash
+curl -X POST http://localhost:8080/transpile \
+  -H "Content-Type: text/plain" \
+  -d @your-file.shexml
+```
 
 ## 👨‍💻Example
 
