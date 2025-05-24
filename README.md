@@ -7,7 +7,7 @@ ShExML2RML is a Rust-based transpiler that converts ShExML (Shape Expressions Ma
 ## 🚀Features
 
 ✅ Transpile ShExML to RML effortlessly.\
-✅ Command-line interface (CLI) for easy usage.\
+✅ Command-line interface (CLI) and API server for easy usage.\
 ✅ Supports basic ShExML structures.\
 ✅ Error handling for invalid input files.\
 ✅ Outputs RML in a structured format for interoperability.
@@ -77,34 +77,23 @@ The web interface provides an interactive ShExML editor and real-time transpilat
 
 ### 💻 Command Line Interface (CLI)
 
-**Basic usage:**
-```sh
-shexml2rml input.shexml -m output.rml
-```
+Use the command line tool to convert ShExML files to RML format directly from your terminal.
 
-**CLI Options:**
-
-```sh
-shexml2rml --help
-```
+#### CLI Options
 
 | Option           | Description                 |
 | ---------------- | --------------------------- |
 | `<input.shexml>` | Input file in ShExML format |
 | `-m, --mapping`  | Specify output file for RML |
-| `-v, --version`  | Display version info        |
 | `-h, --help`     | Show help message           |
 
-**Examples:**
+#### Examples:
 ```sh
 # Convert ShExML to RML with specific output file
 shexml2rml example.shexml -m result.rml
 
 # Convert ShExML to RML (output will be auto-generated)
 shexml2rml example.shexml
-
-# Check version
-shexml2rml --version
 ```
 
 ### 🔗 API Usage
@@ -118,6 +107,8 @@ The API will be available at **http://localhost:8080** with the following endpoi
 
 - **POST** `/transpile` - Convert ShExML content to RML
 - **GET** `/health` - Health check endpoint
+
+>NOTE: If you're running on Docker, this API is started automatically
 
 **Example API call:**
 ```bash
