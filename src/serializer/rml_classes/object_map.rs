@@ -24,7 +24,8 @@ impl ObjectMap {
             term_type,
             parent_triples_map
         }
-    }
+    }    
+
 }
 
 impl fmt::Display for ObjectMap {

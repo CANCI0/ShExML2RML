@@ -7,12 +7,6 @@ pub struct NamespacePrefix {
 }
 
 impl NamespacePrefix {
-    pub fn new() -> NamespacePrefix {
-        NamespacePrefix{
-            identifier: String::from("schema:"),
-            uri: String::from("http://schema.org/"),
-        }
-    }
 }
 
 impl fmt::Display for NamespacePrefix {

@@ -21,6 +21,7 @@ impl SubjectMap {
             template,
         }
     }
+    
 }
 
 impl fmt::Display for SubjectMap {

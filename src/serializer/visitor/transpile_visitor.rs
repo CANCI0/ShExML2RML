@@ -1,12 +1,11 @@
-use crate::parser::shexml_actions::{*, Iterator as Iterator_};
-use crate::serializer::visitor::abstract_visitor::Visitor;
+use crate::parser::shexml_actions::{Iterator as Iterator_, *};
 use crate::serializer::rml_classes::*;
+use crate::serializer::visitor::abstract_visitor::Visitor;
 use std::any::Any;
 use std::collections::HashMap;
 use std::iter::Iterator;
 
 pub struct TranspileVisitor {
-    pub rml_code: Vec<RmlNode>,
     pub result_prefixes: Vec<NamespacePrefix>,
     pub result_triple_maps: Vec<TriplesMap>,
     pub prefixes: HashMap<String, Prefix>,
@@ -14,14 +13,12 @@ pub struct TranspileVisitor {
     pub iterators: HashMap<String, Iterator_>,
     pub shapes: HashMap<String, Shape>,
     pub iterators_for_expression: HashMap<String, Vec<Iterator_>>,
-    pub sources_for_iterator: HashMap<String, Vec<Source>>,
     pub ids_for_logical_sources: HashMap<String, LogicalSource>,
 }
 
 impl TranspileVisitor {
     pub fn new() -> Self {
         let mut v = Self {
-            rml_code: vec![],
             result_prefixes: vec![],
             result_triple_maps: vec![],
             prefixes: HashMap::new(),
@@ -29,14 +26,16 @@ impl TranspileVisitor {
             iterators: HashMap::new(),
             shapes: Default::default(),
             iterators_for_expression: HashMap::new(),
-            sources_for_iterator: Default::default(),
             ids_for_logical_sources: HashMap::new(),
         };
 
         let namespaces = vec![
             ("rml:", "http://semweb.mmlab.be/ns/rml#"),
             ("rr:", "http://www.w3.org/ns/r2rml#"),
-            ("d2rq:", "http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#"),
+            (
+                "d2rq:",
+                "http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#",
+            ),
             ("ql:", "http://semweb.mmlab.be/ns/ql#"),
             ("map:", "http://mapping.example.com/"),
         ];
@@ -52,7 +51,6 @@ impl TranspileVisitor {
 }
 
 impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
-
     fn visit_shexml(&mut self, n: &Shexml, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         if let Some(prefixes) = &n.prefixes {
             for decl in prefixes {
@@ -76,12 +74,58 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         }
         if let Some(shapes) = &n.shapes {
             for shape in shapes {
-                self.shapes.insert(format!("{}{}", shape.subject.class.namespace, shape.subject.class.identifier), shape.clone());
+                self.shapes.insert(
+                    format!(
+                        "{}{}",
+                        shape.subject.class.namespace, shape.subject.class.identifier
+                    ),
+                    shape.clone(),
+                );
             }
 
             for decl in shapes {
                 self.visit_shape(decl, &o);
             }
+        }
+
+        let mut parent_triples_maps: Vec<&mut TriplesMap> = Vec::new();
+        let mut child_triples_maps: Vec<&TriplesMap> = Vec::new();
+
+        for triples_map_node in self.result_triple_maps.iter_mut() {
+            let is_child = triples_map_node
+                .predicate_object_maps
+                .iter()
+                .all(|po_map| po_map.object_map.parent_triples_map.is_none());
+
+            if is_child {
+                child_triples_maps.push(triples_map_node);
+            } else {
+                parent_triples_maps.push(triples_map_node);
+            }
+        }
+        for parent_triples_map in parent_triples_maps.iter_mut() {
+            parent_triples_map
+                .predicate_object_maps
+                .retain_mut(|po_map| {
+                    if po_map.object_map.parent_triples_map.is_some() {
+                        if let Some(index) = child_triples_maps.iter().position(|child| {
+                            child.logical_source.source == parent_triples_map.logical_source.source
+                                && child
+                                    .logical_source
+                                    .iterator
+                                    .starts_with(&parent_triples_map.logical_source.iterator)
+                        }) {
+                            let child = child_triples_maps[index];
+                            po_map.object_map.parent_triples_map = Some(child.clone());
+                            child_triples_maps.remove(index);
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        true
+                    }
+                });
         }
 
         None
@@ -101,7 +145,11 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         None
     }
 
-    fn visit_expression(&mut self, n: &Expression, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_expression(
+        &mut self,
+        n: &Expression,
+        _: &Option<Box<dyn Any>>,
+    ) -> Option<Box<dyn Any>> {
         let identifier = Some(Box::new(n.identifier.clone()) as Box<dyn Any>);
 
         for a in &n.paths {
@@ -120,8 +168,8 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
     fn visit_shape(&mut self, n: &Shape, _: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
         let subject_generator = &n.subject.subject_identifier.subject_generator.as_str();
 
-        let mut path= "";
-        let mut attr= "";
+        let mut path = "";
+        let mut attr = "";
 
         if let Some(pos) = subject_generator.rfind('.') {
             path = &subject_generator[..pos];
@@ -132,7 +180,6 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             Some(it) => it.clone(),
             None => return None,
         };
-
 
         for iterator in iterators {
             if let Some(logical_source) = self.ids_for_logical_sources.get(&iterator.path) {
@@ -146,7 +193,10 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
                 if let Some(predicate_objects) = &n.predicate_objects {
                     for predicate_object in predicate_objects {
-                        if let Some(po_box) = self.visit_predicate_object(predicate_object, &Some(Box::new(iterator.clone()) as Box<dyn Any>)) {
+                        if let Some(po_box) = self.visit_predicate_object(
+                            predicate_object,
+                            &Some(Box::new(iterator.clone()) as Box<dyn Any>),
+                        ) {
                             if let Ok(po) = po_box.downcast::<PredicateObjectMap>() {
                                 triples_map.predicate_object_maps.push(*po);
                             }
@@ -159,47 +209,68 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
         None
     }
 
-
-    fn visit_predicate_object(&mut self, p: &PredicateObject, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_predicate_object(
+        &mut self,
+        p: &PredicateObject,
+        o: &Option<Box<dyn Any>>,
+    ) -> Option<Box<dyn Any>> {
         let Some(iterator) = o.as_ref().and_then(|o| o.downcast_ref::<Iterator_>()) else {
             return None;
         };
 
         let object = if let Object::DataValue(data_value) = &p.object {
-            let prefix_uri = data_value.namespace.as_ref().and_then(|prefix| self.prefixes.get(prefix)).map(|p| &p.uri).map_or("", |v| v);
+            let prefix_uri = data_value
+                .namespace
+                .as_ref()
+                .and_then(|prefix| self.prefixes.get(prefix))
+                .map(|p| &p.uri)
+                .map_or("", |v| v);
 
-            let mut path= "";
+            let mut path = "";
 
             if let Some(pos) = data_value.shape_path.rfind('.') {
                 path = &data_value.shape_path[pos + 1..];
             }
 
-            let term_type = match prefix_uri{
+            let term_type = match prefix_uri {
                 "" => TermType::Literal,
-                _ => TermType::IRI
+                _ => TermType::IRI,
             };
             let field = iterator.fields.iter().find(|f| f.identifier == path)?;
             ObjectMap::new(
                 Some(format!("{}{{{}}}", prefix_uri, field.path)),
                 Some(term_type),
-                None
+                None,
             )
+        } else if let Object::Reference(reference) = &p.object {
+            // Create ObjectMap with parent triples map reference
+            let logical_source = LogicalSource::new(
+                "placeholder".to_string(),
+                ReferenceFormulation::None,
+                "placeholder".to_string(),
+            );
+            let subject_map =
+                SubjectMap::new(format!("{}{}", reference.namespace, reference.identifier));
+            let mut parent_triples_map = TriplesMap::new(logical_source, subject_map, vec![]);
+            parent_triples_map.id = format!("ref_{}", reference.identifier);
 
-        } else if let Object::Reference(_) = &p.object {
-            ObjectMap::new(
-                None,
-                None,
-                None
-            )
+            ObjectMap::new(None, None, Some(parent_triples_map))
         } else {
             panic!()
         };
 
-        let predicate = PredicateMap::new(format!("{}{}", p.predicate.namespace, p.predicate.identifier));
+        let predicate = PredicateMap::new(format!(
+            "{}{}",
+            p.predicate.namespace, p.predicate.identifier
+        ));
         Some(Box::new(PredicateObjectMap::new(object, predicate)))
     }
 
-    fn visit_iterator_file_relation(&mut self, n: &IteratorFileRelation, o: &Option<Box<dyn Any>>) -> Option<Box<dyn Any>> {
+    fn visit_iterator_file_relation(
+        &mut self,
+        n: &IteratorFileRelation,
+        o: &Option<Box<dyn Any>>,
+    ) -> Option<Box<dyn Any>> {
         let iterator = self.iterators.get(&n.iterator)?;
         let file = self.sources.get(&n.file)?;
 
@@ -213,7 +284,8 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
             file.path.clone(),
         );
 
-        self.ids_for_logical_sources.insert(iterator.path.clone(), logical_source.clone());
+        self.ids_for_logical_sources
+            .insert(iterator.path.clone(), logical_source.clone());
 
         if let Some(nested_iterators) = &iterator.iterators.as_ref() {
             for nested_iterator in nested_iterators {
@@ -230,7 +302,8 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
                     file.path.clone(),
                 );
 
-                self.ids_for_logical_sources.insert(nested_iterator.path.clone(), nested_ls);
+                self.ids_for_logical_sources
+                    .insert(nested_iterator.path.clone(), nested_ls);
             }
         }
 
@@ -254,5 +327,4 @@ impl Visitor<Option<Box<dyn Any>>> for TranspileVisitor {
 
         None
     }
-
 }

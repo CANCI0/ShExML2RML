@@ -3,7 +3,7 @@ mod unit_tests {
     use indoc::indoc;
     use shexml2rml::serializer::rml_classes::{
         LogicalSource, ObjectMap, PredicateMap, PredicateObjectMap, ReferenceFormulation,
-        SubjectMap, TermType, TriplesMap,
+        SubjectMap, TermType, TriplesMap
     };
 
     #[test]
@@ -22,10 +22,8 @@ mod unit_tests {
         "};
 
         assert_eq!(format!("{}", input), expected_output);
-    }
-
-    #[test]
-    fn test_object_map_display_template() {
+    }    #[test]
+    fn test_object_map_display_template() {       
         let input = ObjectMap::new(
             Some(String::from("http://dbpedia.org/resource/{year}")),
             Some(TermType::IRI),
@@ -39,9 +37,7 @@ mod unit_tests {
         "};
 
         assert_eq!(format!("{}", input), expected_output);
-    }
-
-    #[test]
+    }    #[test]
     fn test_predicate_map_display() {
         let input = PredicateMap::new(String::from(":year"));
 
@@ -50,9 +46,7 @@ mod unit_tests {
                     rr:constant  :year ."};
 
         assert_eq!(format!("{}", input), expected_output);
-    }
-
-    #[test]
+    }    #[test]
     fn test_predicate_object_map_display() {
         let input = PredicateObjectMap::new(
             ObjectMap::new(
@@ -76,9 +70,7 @@ mod unit_tests {
         "};
 
         assert_eq!(format!("{}", input), expected_output);
-    }
-
-    #[test]
+    }    #[test]
     fn test_object_map_display_parent_triples_map() {
         let input = ObjectMap {
             id: String::from("o_22"),
@@ -119,8 +111,6 @@ mod unit_tests {
 
         assert_eq!(format!("{}", input), expected_output);
     }
-
-
     #[test]
     fn test_subject_map_display() {
         let input = SubjectMap::new(String::from("http://example.com/{id}"));
@@ -131,9 +121,7 @@ mod unit_tests {
         "};
 
         assert_eq!(format!("{}", input), expected_output);
-    }
-
-    #[test]
+    }    #[test]
     fn test_triples_map_display() {
         let input = TriplesMap {
             id: String::from("m_1"),

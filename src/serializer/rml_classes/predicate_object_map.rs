@@ -24,6 +24,7 @@ impl PredicateObjectMap {
             predicate_map,
         }
     }
+    
 }
 
 impl fmt::Display for PredicateObjectMap {

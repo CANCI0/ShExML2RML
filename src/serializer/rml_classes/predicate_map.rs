@@ -21,6 +21,7 @@ impl PredicateMap {
             constant
         }
     }
+    
 }
 
 impl fmt::Display for PredicateMap {

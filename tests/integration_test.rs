@@ -43,11 +43,9 @@ mod integration_test {
 
         let result_str = format!("{}\n{}", prefixes, triple_maps);
 
-        println!("{}", result_str);
-
-        assert_eq!(result_str, expected, "The generated RML does not match the expected output.");
+        println!("{}", result_str);        assert_eq!(result_str, expected, "The generated RML does not match the expected output.");
     }
-
+    
     #[test]
     fn test_iterators_single_expression_nested() {
         let parser = ShexmlParser::new();
@@ -79,11 +77,9 @@ mod integration_test {
 
         let result_str = format!("{}\n{}", prefixes, triple_maps);
 
-        println!("{}", result_str);
-
-        assert_eq!(result_str, expected, "The generated RML does not match the expected output.");
+        println!("{}", result_str);        assert_eq!(result_str, expected, "The generated RML does not match the expected output.");
     }
-
+    
     #[test]
     fn test_single_iterator_single_expression() {
         let parser = ShexmlParser::new();

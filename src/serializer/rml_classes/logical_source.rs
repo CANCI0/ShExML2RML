@@ -26,7 +26,8 @@ impl LogicalSource {
             reference_formulation,
             source,
         }
-    }
+    }    
+    
 }
 
 

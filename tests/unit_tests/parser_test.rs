@@ -451,7 +451,7 @@ mod unit_tests {
                         },
                         object: Reference(OtherReference {
                             namespace: ":".to_string(),
-                            identifier: String::from("SomeIdentifier"),
+                            identifier: String::from("Actor"),
                         }),
                     },
 
