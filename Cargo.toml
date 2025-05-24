@@ -2,6 +2,12 @@
 name = "shexml2rml"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A high-performance Rust-based transpiler that converts ShExML to RML"
+homepage = "https://github.com/CANCI0/shexml2rml"
+repository = "https://github.com/CANCI0/shexml2rml"
+keywords = ["shexml", "rml", "rdf", "transpiler", "semantic-web"]
+categories = ["command-line-utilities", "web-programming"]
 
 [dependencies]
 rustemo = "0.7.0"

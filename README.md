@@ -1,16 +1,22 @@
 # ShExML2RML
 
-## 🌟About
+## 🌟 About
 
-ShExML2RML is a Rust-based transpiler that converts ShExML (Shape Expressions Mapping Language) to RML (RDF Mapping Language), enabling seamless generation of RDF triples from ShExML data.
+ShExML2RML is a high-performance Rust-based transpiler that converts ShExML (Shape Expressions Mapping Language) to RML (RDF Mapping Language), enabling seamless generation of RDF triples from ShExML data.
 
-## 🚀Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/rust-1.85+-orange.svg)](https://www.rust-lang.org)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com)
 
-✅ Transpile ShExML to RML effortlessly.\
-✅ Command-line interface (CLI) and API server for easy usage.\
-✅ Supports basic ShExML structures.\
-✅ Error handling for invalid input files.\
-✅ Outputs RML in a structured format for interoperability.
+## 🚀 Features
+
+✅ **Fast & Reliable**: High-performance Rust implementation\
+✅ **Multiple Interfaces**: CLI, Web UI, and REST API\
+✅ **Docker Ready**: One-command deployment with Docker Compose\
+✅ **Real-time Processing**: Interactive web interface with live transpilation\
+✅ **Comprehensive Error Handling**: Clear error messages for invalid inputs\
+✅ **Standards Compliant**: Generates valid RML output for interoperability\
+✅ **Cross-platform**: Works on Linux, macOS, and Windows
 
 ## 🔧Installation
 
@@ -112,9 +118,13 @@ The API will be available at **http://localhost:8080** with the following endpoi
 
 **Example API call:**
 ```bash
+# Convert ShExML to RML via API
 curl -X POST http://localhost:8080/transpile \
   -H "Content-Type: text/plain" \
   -d @your-file.shexml
+
+# Health check
+curl http://localhost:8080/health
 ```
 
 ## 👨‍💻Example
@@ -175,36 +185,74 @@ map:p_1  a           rr:predicateMap ;
 
 ```
 
-## 🛠️Development
+## 🛠️ Development
+
+### Setting up the Development Environment
 
 Clone the repository and start developing:
 
 ```sh
 git clone https://github.com/yourusername/shexml2rml.git
 cd shexml2rml
+
+# Run the CLI tool directly
 cargo run -- input.shexml -m output.rml
+
+# Start the API server for development
+cargo run -- --api
+
+# Run tests
+cargo test
 ```
 
-## 🚧Limitations
+### Project Structure
 
-While ShExML2RML project provides a functional ShExML to RML transformation, several aspects of the ShExML specification have yet to be fully implemented. These limitations include:
+```
+shexml2rml/
+├── src/                 # Rust source code
+├── webapp/             # React web interface
+├── Dockerfile          # Multi-stage Docker build
+├── docker-compose.yml  # Easy deployment
+└── Cargo.toml         # Rust dependencies
+```
 
-- [**Nested Iterators**](https://shexml.herminiogarcia.com/spec/#nested-iterator)
-- [**Queries**](https://shexml.herminiogarcia.com/spec/#query)
-- [**Pushed and Popped Fields**](https://shexml.herminiogarcia.com/spec/#pushed-and-popped-fields)
-- [**Data Types**](https://shexml.herminiogarcia.com/spec/#data-types-static-version)
-- [**Lang Tags**](https://shexml.herminiogarcia.com/spec/#lang-tags-static-version)
-- [**Graphs**](https://shexml.herminiogarcia.com/spec/#graphs)
+### Contributing
 
-The project currently only supports [**basic**](https://shexml.herminiogarcia.com/spec/#basic-expression) and [**union**](https://shexml.herminiogarcia.com/spec/#union) expressions in ShExML. More advanced expression types and their combinations are not yet supported.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/awesome-feature`)
+3. Commit your changes (`git commit -m 'Add awesome feature'`)
+4. Push to the branch (`git push origin feature/awesome-feature`)
+5. Open a Pull Request
+
+## 🚧 Limitations
+
+While ShExML2RML provides a functional ShExML to RML transformation, several aspects of the ShExML specification are still under development. Current limitations include:
+
+### Not Yet Supported:
+- [**Nested Iterators**](https://shexml.herminiogarcia.com/spec/#nested-iterator) - Complex nested data structures
+- [**Queries**](https://shexml.herminiogarcia.com/spec/#query) - Advanced query capabilities  
+- [**Pushed and Popped Fields**](https://shexml.herminiogarcia.com/spec/#pushed-and-popped-fields) - Field manipulation operations
+- [**Data Types**](https://shexml.herminiogarcia.com/spec/#data-types-static-version) - Explicit data type declarations
+- [**Lang Tags**](https://shexml.herminiogarcia.com/spec/#lang-tags-static-version) - Language tag support
+- [**Graphs**](https://shexml.herminiogarcia.com/spec/#graphs) - Named graph generation
+
+### Currently Supported:
+✅ [**Basic Expressions**](https://shexml.herminiogarcia.com/spec/#basic-expression) - Standard mappings\
+✅ [**Union Expressions**](https://shexml.herminiogarcia.com/spec/#union) - Multiple source combinations
+
+More advanced features are planned for future releases. Contributions are welcome!
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Support
+
+- 📧 **Email**: [your-email@example.com](mailto:your-email@example.com)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/shexml2rml/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/shexml2rml/discussions)
 
 ---
 
-These limitations highlight areas where the ShExML2RML is still evolving, and where future development is focused on expanding functionality and improving robustness.
-
-
-
-## 🤝🏼Contributing
-
-Contributions are welcome! Please open an issue or a pull request.
+**Made with ❤️ and Rust**
 
