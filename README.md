@@ -192,7 +192,7 @@ map:p_1  a           rr:predicateMap ;
 Clone the repository and start developing:
 
 ```sh
-git clone https://github.com/yourusername/shexml2rml.git
+git clone https://github.com/CANCI0/shexml2rml.git
 cd shexml2rml
 
 # Run the CLI tool directly
@@ -229,15 +229,16 @@ shexml2rml/
 While ShExML2RML provides a functional ShExML to RML transformation, several aspects of the ShExML specification are still under development. Current limitations include:
 
 ### Not Yet Supported:
-- [**Nested Iterators**](https://shexml.herminiogarcia.com/spec/#nested-iterator) - Complex nested data structures
-- [**Queries**](https://shexml.herminiogarcia.com/spec/#query) - Advanced query capabilities  
-- [**Pushed and Popped Fields**](https://shexml.herminiogarcia.com/spec/#pushed-and-popped-fields) - Field manipulation operations
-- [**Data Types**](https://shexml.herminiogarcia.com/spec/#data-types-static-version) - Explicit data type declarations
-- [**Lang Tags**](https://shexml.herminiogarcia.com/spec/#lang-tags-static-version) - Language tag support
-- [**Graphs**](https://shexml.herminiogarcia.com/spec/#graphs) - Named graph generation
+❌ [**Recursive Nested Iterators**](https://shexml.herminiogarcia.com/spec/#nested-iterator) - Complex nested data structures, more that one level deep\
+❌ [**Queries**](https://shexml.herminiogarcia.com/spec/#query) - Advanced query capabilities\
+❌ [**Pushed and Popped Fields**](https://shexml.herminiogarcia.com/spec/#pushed-and-popped-fields) - Field manipulation operations\
+❌ [**Data Types**](https://shexml.herminiogarcia.com/spec/#data-types-static-version) - Explicit data type declarations\
+❌ [**Lang Tags**](https://shexml.herminiogarcia.com/spec/#lang-tags-static-version) - Language tag support\
+❌ [**Graphs**](https://shexml.herminiogarcia.com/spec/#graphs) - Named graph generation
 
 ### Currently Supported:
 ✅ [**Basic Expressions**](https://shexml.herminiogarcia.com/spec/#basic-expression) - Standard mappings\
+✅ [**Nested iterators**](https://shexml.herminiogarcia.com/spec/#basic-expression) - Just one level deep\
 ✅ [**Union Expressions**](https://shexml.herminiogarcia.com/spec/#union) - Multiple source combinations
 
 More advanced features are planned for future releases. Contributions are welcome!
@@ -248,11 +249,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Support
 
-- 📧 **Email**: [your-email@example.com](mailto:your-email@example.com)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/shexml2rml/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/shexml2rml/discussions)
-
----
-
-**Made with ❤️ and Rust**
-
+- 🐛 **Issues**: [GitHub Issues](https://github.com/CANCI0/shexml2rml/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/CANCI0/shexml2rml/discussions)
