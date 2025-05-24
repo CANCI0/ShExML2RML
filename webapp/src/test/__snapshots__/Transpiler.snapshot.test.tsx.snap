@@ -1,0 +1,522 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Transpiler Snapshots > matches snapshot for header section 1`] = `
+<div
+  class="flex justify-between items-center mb-8"
+>
+  <div>
+    <div
+      class="relative inline-block"
+    >
+      <div>
+        <h1
+          class="text-4xl font-bold tracking-tight"
+        >
+          ShExML to RML
+        </h1>
+      </div>
+    </div>
+    <p
+      class="text-muted-foreground mt-2 leading-4.5"
+    >
+      Transform ShExML mappings to RML with this modern, Rust-based transpiler
+    </p>
+  </div>
+  <div
+    class="flex items-center gap-4"
+  >
+    <div
+      class="relative inline-block"
+    >
+      <div>
+        <a
+          class="text-muted-foreground hover:text-foreground transition-colors"
+          href="https://shexml.herminiogarcia.com/spec/"
+          rel="noopener noreferrer"
+          target="_blank"
+          title="ShExML Documentation"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <path
+              d="M12 16v-4"
+            />
+            <path
+              d="M12 8h.01"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <button
+      aria-label="Cambiar a modo oscuro"
+      class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 w-11"
+    >
+      <svg
+        class="h-[1.2rem] w-[1.2rem]"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Cambiar a modo oscuro
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Transpiler Snapshots > matches snapshot for initial render 1`] = `
+<div
+  class="container mx-auto px-4 py-8 h-dvh"
+>
+  <div
+    class="flex justify-between items-center mb-8"
+  >
+    <div>
+      <div
+        class="relative inline-block"
+      >
+        <div>
+          <h1
+            class="text-4xl font-bold tracking-tight"
+          >
+            ShExML to RML
+          </h1>
+        </div>
+      </div>
+      <p
+        class="text-muted-foreground mt-2 leading-4.5"
+      >
+        Transform ShExML mappings to RML with this modern, Rust-based transpiler
+      </p>
+    </div>
+    <div
+      class="flex items-center gap-4"
+    >
+      <div
+        class="relative inline-block"
+      >
+        <div>
+          <a
+            class="text-muted-foreground hover:text-foreground transition-colors"
+            href="https://shexml.herminiogarcia.com/spec/"
+            rel="noopener noreferrer"
+            target="_blank"
+            title="ShExML Documentation"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <path
+                d="M12 16v-4"
+              />
+              <path
+                d="M12 8h.01"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+      <button
+        aria-label="Cambiar a modo oscuro"
+        class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 w-11"
+      >
+        <svg
+          class="h-[1.2rem] w-[1.2rem]"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
+          />
+        </svg>
+        <span
+          class="sr-only"
+        >
+          Cambiar a modo oscuro
+        </span>
+      </button>
+    </div>
+  </div>
+  <div
+    class="space-y-6"
+  >
+    <div
+      class="h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-2"
+    >
+      <button
+        class="justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background text-foreground shadow-sm flex items-center gap-2"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <polyline
+            points="16 18 22 12 16 6"
+          />
+          <polyline
+            points="8 6 2 12 8 18"
+          />
+        </svg>
+        Editor
+      </button>
+      <button
+        class="justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-background/50 hover:text-foreground flex items-center gap-2"
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+          <path
+            d="M12 16v-4"
+          />
+          <path
+            d="M12 8h.01"
+          />
+        </svg>
+        About
+      </button>
+    </div>
+    <div
+      class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-6 h-full"
+    >
+      <div
+        class="flex flex-wrap gap-4 mb-4"
+      >
+        <div
+          class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground text-sm"
+        >
+          Examples:
+        </div>
+        <button
+          class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 rounded-md px-3"
+        >
+          Basic
+        </button>
+        <button
+          class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+        >
+          Advanced
+        </button>
+      </div>
+      <div
+        class="grid lg:grid-cols-2 gap-6"
+      >
+        <div
+          class="rounded-lg text-card-foreground shadow-sm overflow-hidden border bg-card"
+        >
+          <div
+            class="flex items-center justify-between p-4 border-b"
+          >
+            <div
+              class="flex items-center gap-2"
+            >
+              <svg
+                class="h-5 w-5 text-primary"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+                />
+                <polyline
+                  points="14 2 14 8 20 8"
+                />
+                <path
+                  d="m10 13-2 2 2 2"
+                />
+                <path
+                  d="m14 17 2-2-2-2"
+                />
+              </svg>
+              <h2
+                class="font-medium"
+              >
+                ShExML Input
+              </h2>
+            </div>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="14"
+                  rx="2"
+                  ry="2"
+                  width="14"
+                  x="8"
+                  y="8"
+                />
+                <path
+                  d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                />
+              </svg>
+              <span
+                class="sr-only"
+              >
+                Copy ShExML code
+              </span>
+            </button>
+          </div>
+          <div
+            class="p-0"
+          >
+            <textarea
+              aria-label="ShExML Code"
+              class="w-full h-[400px] p-4 font-mono text-sm bg-background/50 focus:outline-none resize-none"
+              placeholder="Enter your ShExML code here..."
+              spellcheck="false"
+            >
+              PREFIX : &lt;http://example.com/&gt;
+PREFIX schema: &lt;http://schema.org/&gt;
+SOURCE films_xml_file &lt;http://shexml.herminiogarcia.com/files/films.xml&gt;
+
+ITERATOR film_xml &lt;xpath: //film&gt; {
+    FIELD id &lt;@id&gt;
+    FIELD name &lt;name&gt;
+}
+
+EXPRESSION films &lt;films_xml_file.film_xml&gt;
+
+:Film :[films.id] {
+    schema:name [films.name] ;
+}
+            </textarea>
+          </div>
+        </div>
+        <div
+          class="rounded-lg text-card-foreground shadow-sm overflow-hidden border bg-card"
+        >
+          <div
+            class="flex items-center justify-between p-4 border-b"
+          >
+            <div
+              class="flex items-center gap-2"
+            >
+              <svg
+                class="h-5 w-5 text-primary"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+                />
+                <polyline
+                  points="14 2 14 8 20 8"
+                />
+                <path
+                  d="m10 13-2 2 2 2"
+                />
+                <path
+                  d="m14 17 2-2-2-2"
+                />
+              </svg>
+              <h2
+                class="font-medium"
+              >
+                RML Output
+              </h2>
+            </div>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10"
+              disabled=""
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="14"
+                  rx="2"
+                  ry="2"
+                  width="14"
+                  x="8"
+                  y="8"
+                />
+                <path
+                  d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                />
+              </svg>
+              <span
+                class="sr-only"
+              >
+                Copy RML code
+              </span>
+            </button>
+          </div>
+          <div
+            class="p-0"
+          >
+            <textarea
+              aria-label="RML Code"
+              class="w-full h-[400px] p-4 font-mono text-sm bg-background/50 focus:outline-none resize-none"
+              placeholder="RML code will appear here after conversion..."
+              readonly=""
+              spellcheck="false"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-wrap justify-center gap-4 mt-6"
+      >
+        <button
+          class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-md px-6"
+        >
+          Convert to RML
+          <svg
+            class="ml-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </button>
+        <button
+          class="inline-flex items-center justify-center text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 rounded-md px-8"
+        >
+          Clear All
+        </button>
+      </div>
+    </div>
+  </div>
+  <footer
+    class="mt-16 pt-8 border-t text-center text-muted-foreground text-sm"
+  >
+    <p
+      class="leading-4.5"
+    >
+      This transpiler is for demonstration purposes. For production use, please refer to official ShExML and RML documentation.
+    </p>
+    <p
+      class="mt-2 text-primary leading-4.5"
+    >
+      © 
+      2025
+      , Developed by 
+      <a
+        href="https://github.com/canci0"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Martín Cancio Barrera
+      </a>
+    </p>
+  </footer>
+</div>
+`;
