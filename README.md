@@ -96,10 +96,10 @@ Use the command line tool to convert ShExML files to RML format directly from yo
 #### Examples:
 ```sh
 # Convert ShExML to RML with specific output file
-shexml2rml example.shexml -m result.rml
+shexml2rml input.shexml -m result.rml
 
-# Convert ShExML to RML (output will be auto-generated)
-shexml2rml example.shexml
+# Convert ShExML to RML (output will be shown in console)
+shexml2rml input.shexml
 ```
 
 ### 🔗 API Usage
@@ -198,7 +198,7 @@ cd shexml2rml
 # Run the CLI tool directly
 cargo run -- input.shexml -m output.rml
 
-# Start the API server for development
+# Start the API server
 cargo run -- --api
 
 # Run tests
