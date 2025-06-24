@@ -6,11 +6,6 @@ use crate::cli::args::CliArgs;
 pub fn run() -> Result<(), String> {
     let args = CliArgs::parse();
 
-    if args.version {
-        println!("shexml2rml v0.1.0");
-        return Ok(());
-    }
-
     let input_content = fs::read_to_string(&args.input)
         .map_err(|e| format!("Error reading input file '{}': {}", args.input, e))?;
 

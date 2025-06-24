@@ -42,10 +42,18 @@ impl fmt::Display for LogicalSource {
 
         let mut result = String::new();
 
-        result.push_str(&format!("map:{}  a                rml:LogicalSource ;\n", self.id));
-        result.push_str(&format!("        rml:iterator              \"{}\" ;\n", self.iterator));
-        result.push_str(&format!("        rml:referenceFormulation  ql:{} ;\n", self.reference_formulation));
-        result.push_str(&format!("        rml:source                \"{}\" .", self.source));
+        result.push_str(
+            &format!("map:{}  a                rml:LogicalSource ;\n", self.id)
+        );
+        result.push_str(
+            &format!("        rml:iterator              \"{}\" ;\n", self.iterator)
+        );
+        result.push_str(
+            &format!("        rml:referenceFormulation  ql:{} ;\n", self.reference_formulation)
+        );
+        result.push_str(
+            &format!("        rml:source                \"{}\" .", self.source)
+        );
 
         writeln!(f, "{}", str.trim())
     }

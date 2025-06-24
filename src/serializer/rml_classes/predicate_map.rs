@@ -28,8 +28,12 @@ impl fmt::Display for PredicateMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let mut result = String::new();
 
-        result.push_str(&format!("map:{}  a           rr:predicateMap ;\n", self.id));
-        result.push_str(&format!("        rr:constant  {} .", self.constant));
+        result.push_str(
+            &format!("map:{}  a           rr:predicateMap ;\n", self.id)
+        );
+        result.push_str(
+            &format!("        rr:constant  {} .", self.constant)
+        );
 
         write!(f, "{}", result)
     }
